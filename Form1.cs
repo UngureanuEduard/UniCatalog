@@ -7,7 +7,9 @@ namespace UniCatalog
 {
     public partial class Form1 : Form
     {
+        private Form currentForm;
         private List<Account> accountList;
+
         public Form1()
         {
             accountList = new List<Account>();
@@ -16,12 +18,14 @@ namespace UniCatalog
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            label3.Hide();
+            comboBox1.Hide();
             textBox2.PasswordChar = '*';
             string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
 
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            try
             {
-                try
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
                     Console.WriteLine("Connected to the database.");
@@ -33,23 +37,23 @@ namespace UniCatalog
                         {
                             while (reader.Read())
                             {
-                                Account account = new Account();
-                                account.User = reader["User"].ToString();
-                                account.Password = reader["Password"].ToString();
-                                account.UserType = int.Parse(reader["User Type"].ToString());
-
+                                Account account = new Account
+                                {
+                                    User = reader.GetString("User"),
+                                    Password = reader.GetString("Password"),
+                                    UserType = reader.GetInt32("User Type")
+                                };
                                 accountList.Add(account);
                             }
                         }
                     }
 
-                    connection.Close();
                     Console.WriteLine("Disconnected from the database.");
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine("Error: " + ex.Message);
-                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
             }
         }
 
@@ -60,45 +64,95 @@ namespace UniCatalog
 
             int found = 0;
 
-            foreach (var item in accountList)
+            foreach (Account account in accountList)
             {
-                Account account = (Account)item;
                 if (account.User == username && account.Password == password)
                 {
                     found = account.UserType;
-
+                    textBox1.Enabled = false;
+                    textBox2.Enabled = false;
                     break;
                 }
             }
 
-            if (found!=0)
+            if (comboBox1.Items.Count != 0)
             {
-                MessageBox.Show("Login successful!");
-                this.Hide();
+                switch (comboBox1.SelectedItem.ToString())
+                {
+                    case "Admin":
+                        found = 1;
+                        break;
+                    case "Secretar":
+                        found = 10;
+                        break;
+                    default:
+                        found = 100;
+                        break;
+                }
+            }
+
+            if (found == 1 || found == 10 || found == 100)
+            {
                 switch (found)
                 {
                     case 1:
-                        Form2 form2 = new Form2();
-                        form2.Show();
+                        currentForm = new Form2();
                         break;
-                    case 2:
-                        Form3 form3 = new Form3();
-                        form3.Show();
+                    case 10:
+                        currentForm = new Form3();
                         break;
-                    case 3:
-                        Form4 form4 = new Form4();
-                        form4.Show();
+                    case 100:
+                        currentForm = new Form4();
                         break;
-
                 }
-                   
+                Hide();
+                currentForm.FormClosed += CurrentForm_FormClosed;
+                currentForm.Show();
+            }
+            else if (found != 0)
+            {
+                label3.Show();
+                comboBox1.Show();
+                switch (found)
+                {
+                    case 011:
+                        comboBox1.Items.Add("Admin");
+                        comboBox1.Items.Add("Secretar");
+                        break;
+                    case 110:
+                        comboBox1.Items.Add("Cadru Didactic");
+                        comboBox1.Items.Add("Secretar");
+                        break;
+                    case 101:
+                        comboBox1.Items.Add("Admin");
+                        comboBox1.Items.Add("Cadru Didactic");
+                        break;
+                    case 111:
+                        comboBox1.Items.Add("Admin");
+                        comboBox1.Items.Add("Cadru Didactic");
+                        comboBox1.Items.Add("Secretar");
+                        break;
+                }
             }
             else
             {
                 MessageBox.Show("Invalid username or password.");
             }
         }
+
+        private void CurrentForm_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (sender == currentForm)
+            {
+                if (currentForm is Form1)
+                {
+                    Application.Exit();
+                }
+                else
+                {
+                    Show();
+                }
+            }
+        }
     }
-
-
 }
