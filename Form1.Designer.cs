@@ -34,8 +34,8 @@
             textBox2 = new TextBox();
             button1 = new Button();
             panel1 = new Panel();
-            comboBox1 = new ComboBox();
             label3 = new Label();
+            comboBox1 = new ComboBox();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -77,7 +77,7 @@
             button1.Name = "button1";
             button1.Size = new Size(94, 29);
             button1.TabIndex = 4;
-            button1.Text = "LogIn";
+            button1.Text = "Login";
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
@@ -96,14 +96,6 @@
             panel1.Size = new Size(259, 231);
             panel1.TabIndex = 11;
             // 
-            // comboBox1
-            // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(85, 133);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(151, 28);
-            comboBox1.TabIndex = 5;
-            // 
             // label3
             // 
             label3.AutoSize = true;
@@ -113,6 +105,14 @@
             label3.TabIndex = 6;
             label3.Text = "UserType";
             // 
+            // comboBox1
+            // 
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(85, 133);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(151, 28);
+            comboBox1.TabIndex = 5;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -120,7 +120,7 @@
             ClientSize = new Size(259, 231);
             Controls.Add(panel1);
             Name = "Form1";
-            Text = "Form1";
+            Text = "Login";
             Load += Form1_Load;
             panel1.ResumeLayout(false);
             panel1.PerformLayout();

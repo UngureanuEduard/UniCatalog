@@ -37,6 +37,7 @@
             helpToolStripMenuItem = new ToolStripMenuItem();
             dataGridView1 = new DataGridView();
             button2 = new Button();
+            cicluDeInvatamantToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -67,16 +68,16 @@
             // 
             // optiuniToolStripMenuItem
             // 
-            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem });
+            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem });
             optiuniToolStripMenuItem.Name = "optiuniToolStripMenuItem";
-            optiuniToolStripMenuItem.Size = new Size(72, 24);
-            optiuniToolStripMenuItem.Text = "Optiuni";
+            optiuniToolStripMenuItem.Size = new Size(75, 24);
+            optiuniToolStripMenuItem.Text = "Options";
             // 
             // utilizatoriToolStripMenuItem
             // 
             utilizatoriToolStripMenuItem.Name = "utilizatoriToolStripMenuItem";
-            utilizatoriToolStripMenuItem.Size = new Size(157, 26);
-            utilizatoriToolStripMenuItem.Text = "Utilizatori";
+            utilizatoriToolStripMenuItem.Size = new Size(225, 26);
+            utilizatoriToolStripMenuItem.Text = "Users";
             utilizatoriToolStripMenuItem.Click += utilizatoriToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
@@ -109,6 +110,13 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
+            // cicluDeInvatamantToolStripMenuItem
+            // 
+            cicluDeInvatamantToolStripMenuItem.Name = "cicluDeInvatamantToolStripMenuItem";
+            cicluDeInvatamantToolStripMenuItem.Size = new Size(225, 26);
+            cicluDeInvatamantToolStripMenuItem.Text = "Ciclu De Invatamant";
+            cicluDeInvatamantToolStripMenuItem.Click += cicluDeInvatamantToolStripMenuItem_Click;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -120,7 +128,7 @@
             Controls.Add(label1);
             MainMenuStrip = menuStrip1;
             Name = "Form2";
-            Text = "Form2";
+            Text = "Admin";
             Load += Form2_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
@@ -139,5 +147,6 @@
         private ToolStripMenuItem utilizatoriToolStripMenuItem;
         private DataGridView dataGridView1;
         private Button button2;
+        private ToolStripMenuItem cicluDeInvatamantToolStripMenuItem;
     }
 }
