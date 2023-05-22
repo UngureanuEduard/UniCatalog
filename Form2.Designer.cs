@@ -34,10 +34,14 @@
             menuStrip1 = new MenuStrip();
             optiuniToolStripMenuItem = new ToolStripMenuItem();
             utilizatoriToolStripMenuItem = new ToolStripMenuItem();
+            cicluDeInvatamantToolStripMenuItem = new ToolStripMenuItem();
+            programeDeStudiiToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             dataGridView1 = new DataGridView();
             button2 = new Button();
-            cicluDeInvatamantToolStripMenuItem = new ToolStripMenuItem();
+            comboBox1 = new ComboBox();
+            textBox1 = new TextBox();
+            button1 = new Button();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -68,7 +72,7 @@
             // 
             // optiuniToolStripMenuItem
             // 
-            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem });
+            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem, programeDeStudiiToolStripMenuItem });
             optiuniToolStripMenuItem.Name = "optiuniToolStripMenuItem";
             optiuniToolStripMenuItem.Size = new Size(75, 24);
             optiuniToolStripMenuItem.Text = "Options";
@@ -79,6 +83,20 @@
             utilizatoriToolStripMenuItem.Size = new Size(225, 26);
             utilizatoriToolStripMenuItem.Text = "Users";
             utilizatoriToolStripMenuItem.Click += utilizatoriToolStripMenuItem_Click;
+            // 
+            // cicluDeInvatamantToolStripMenuItem
+            // 
+            cicluDeInvatamantToolStripMenuItem.Name = "cicluDeInvatamantToolStripMenuItem";
+            cicluDeInvatamantToolStripMenuItem.Size = new Size(225, 26);
+            cicluDeInvatamantToolStripMenuItem.Text = "Ciclu De Invatamant";
+            cicluDeInvatamantToolStripMenuItem.Click += cicluDeInvatamantToolStripMenuItem_Click;
+            // 
+            // programeDeStudiiToolStripMenuItem
+            // 
+            programeDeStudiiToolStripMenuItem.Name = "programeDeStudiiToolStripMenuItem";
+            programeDeStudiiToolStripMenuItem.Size = new Size(225, 26);
+            programeDeStudiiToolStripMenuItem.Text = "Programe De Studii";
+            programeDeStudiiToolStripMenuItem.Click += programeDeStudiiToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -110,18 +128,39 @@
             button2.UseVisualStyleBackColor = true;
             button2.Click += button2_Click;
             // 
-            // cicluDeInvatamantToolStripMenuItem
+            // comboBox1
             // 
-            cicluDeInvatamantToolStripMenuItem.Name = "cicluDeInvatamantToolStripMenuItem";
-            cicluDeInvatamantToolStripMenuItem.Size = new Size(225, 26);
-            cicluDeInvatamantToolStripMenuItem.Text = "Ciclu De Invatamant";
-            cicluDeInvatamantToolStripMenuItem.Click += cicluDeInvatamantToolStripMenuItem_Click;
+            comboBox1.FormattingEnabled = true;
+            comboBox1.Location = new Point(627, 65);
+            comboBox1.Name = "comboBox1";
+            comboBox1.Size = new Size(151, 28);
+            comboBox1.TabIndex = 6;
+            // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(627, 99);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(151, 27);
+            textBox1.TabIndex = 7;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(656, 146);
+            button1.Name = "button1";
+            button1.Size = new Size(94, 29);
+            button1.TabIndex = 8;
+            button1.Text = "Insert";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
             // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(button1);
+            Controls.Add(textBox1);
+            Controls.Add(comboBox1);
             Controls.Add(button2);
             Controls.Add(dataGridView1);
             Controls.Add(menuStrip1);
@@ -148,5 +187,9 @@
         private DataGridView dataGridView1;
         private Button button2;
         private ToolStripMenuItem cicluDeInvatamantToolStripMenuItem;
+        private ComboBox comboBox1;
+        private TextBox textBox1;
+        private Button button1;
+        private ToolStripMenuItem programeDeStudiiToolStripMenuItem;
     }
 }

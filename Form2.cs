@@ -1,13 +1,11 @@
 ﻿using MySql.Data.MySqlClient;
-using System;
 using System.Data;
-using System.Windows.Forms;
 
 namespace UniCatalog
 {
     public partial class Form2 : Form
     {
-        private DataTable dataTable;
+        private DataTable dataTable, dataTable1;
         private string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
         private string query;
         private int currentTable;
@@ -25,11 +23,19 @@ namespace UniCatalog
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.Columns["ID"].Visible = false;
             button2.Show();
+            hidestudii();
         }
 
         private void Form2_Load(object sender, EventArgs e)
         {
             button2.Hide();
+            hidestudii();
+        }
+        private void hidestudii()
+        {
+            comboBox1.Hide();
+            textBox1.Hide();
+            button1.Hide();
         }
 
         private void LoadDataFromDatabase(int operatie)
@@ -41,7 +47,19 @@ namespace UniCatalog
                 {
                     connection.Open();
                     Console.WriteLine("Connected to the database.");
-                    query = operatie == 1 ? "SELECT * FROM conturi;" : "SELECT * FROM ciclurideinvatamant;";
+                    if (operatie == 1)
+                    {
+                        query = "SELECT * FROM conturi;";
+                    }
+                    else if (operatie == 2)
+                    {
+                        query = "SELECT * FROM ciclurideinvatamant;";
+
+                    }
+                    else if (operatie == 3)
+                    {
+                        query = "SELECT * FROM programedestudii;";
+                    }
                     using (var command = new MySqlCommand(query, connection))
                     using (var reader = command.ExecuteReader())
                     {
@@ -59,31 +77,39 @@ namespace UniCatalog
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            int rowIndex = e.RowIndex;
-            if (rowIndex >= 0 && rowIndex < dataTable.Rows.Count)
+            if (currentTable != 3)
             {
-                DataRow row = dataTable.Rows[rowIndex];
-                if (currentTable == 1)
+                int rowIndex = e.RowIndex;
+                if (rowIndex >= 0 && rowIndex < dataTable.Rows.Count)
                 {
-                    // Get the modified values from the DataGridView
-                    string id = row["ID"].ToString();
-                    string username = row["User"].ToString();
-                    string password = row["Password"].ToString();
-                    int userType = Convert.ToInt32(row["User Type"]);
-                    UpdateRowInDatabase(id, username, password, userType);
+                    DataRow row = dataTable.Rows[rowIndex];
+                    if (currentTable == 1)
+                    {
+                        // Get the modified values from the DataGridView
+                        string id = row["ID"].ToString();
+                        string username = row["User"].ToString();
+                        string password = row["Password"].ToString();
+                        int userType = Convert.ToInt32(row["User Type"]);
+                        UpdateRowInDatabase(id, username, password, userType);
+                    }
+                    else
+                    {
+                        // Get the modified values from the DataGridView
+                        string ciclu = row["Ciclu"].ToString();
+                        string definire = row["Definire"].ToString();
+                        UpdateRowInDatabase(ciclu, definire, definire, 0);
+                    }
                 }
-                else
-                {
-                    // Get the modified values from the DataGridView
-                    string programdestudii = row["Program de studii"].ToString();
-                    string definire = row["Definire"].ToString();
-                    UpdateRowInDatabase(programdestudii, definire, definire, 0);
-                }
+            }
+            else
+            {
+                MessageBox.Show("You can only remove and insert in this table", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
         private void UpdateRowInDatabase(string id, string username, string password, int userType)
         {
+
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -92,7 +118,7 @@ namespace UniCatalog
                     if (userType != 0)
                         query = "UPDATE conturi SET User = @username, Password = @password, `User Type` = @userType WHERE ID = @id;";
                     else
-                        query = "UPDATE ciclurideinvatamant SET `Program de studii` = @id, Definire = @username WHERE `Program de studii` = @id OR Definire = @username;";
+                        query = "UPDATE ciclurideinvatamant SET Ciclu = @id, Definire = @username WHERE Ciclu = @id OR Definire = @username;";
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@username", username);
@@ -111,40 +137,47 @@ namespace UniCatalog
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
+
         }
 
         private void dataGridView1_UserAddedRow(object sender, DataGridViewRowEventArgs e)
         {
             DataRow newRow = dataTable.NewRow();
-
-            if (currentTable == 1)
+            if (currentTable != 3)
             {
-                // Assign new values to the row
-                string username = "NewUser";
-                string password = "NewPassword";
-                int userType = 1; // Replace with the desired value
+                if (currentTable == 1)
+                {
+                    // Assign new values to the row
+                    string username = "NewUser";
+                    string password = "NewPassword";
+                    int userType = 1; // Replace with the desired value
 
-                // Get the highest ID from the existing rows
-                int maxID = GetMaxIDFromDatabase();
-                int newID = maxID + 1;
+                    // Get the highest ID from the existing rows
+                    int maxID = GetMaxIDFromDatabase();
+                    int newID = maxID + 1;
 
-                newRow["ID"] = newID;
-                newRow["User"] = username;
-                newRow["Password"] = password;
-                newRow["User Type"] = userType;
+                    newRow["ID"] = newID;
+                    newRow["User"] = username;
+                    newRow["Password"] = password;
+                    newRow["User Type"] = userType;
+                }
+                else
+                {
+                    string ciclu = "Ciclu Nou";
+                    string definire = "Descriere noua";
+                    newRow["Ciclu"] = ciclu;
+                    newRow["Definire"] = definire;
+                }
+
+                dataTable.Rows.Add(newRow);
+
+                // Insert the new row into the database
+                InsertRowIntoDatabase(newRow);
             }
             else
             {
-                string programdestudii = "Un Program Nou";
-                string definire = "Descriere noua";
-                newRow["Program de studii"] = programdestudii;
-                newRow["Definire"] = definire;
+                MessageBox.Show("You can only remove and insert in this table , use the buttons", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-
-            dataTable.Rows.Add(newRow);
-
-            // Insert the new row into the database
-            InsertRowIntoDatabase(newRow);
         }
 
         private int GetMaxIDFromDatabase()
@@ -182,7 +215,7 @@ namespace UniCatalog
                 using (var connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-                    query = currentTable == 1 ? "INSERT INTO conturi (ID, User, Password, `User Type`) VALUES (@id, @username, @password, @userType);" : "INSERT INTO ciclurideinvatamant (`Program de studii`, Definire) VALUES (@programdestudii, @definire);";
+                    query = currentTable == 1 ? "INSERT INTO conturi (ID, User, Password, `User Type`) VALUES (@id, @username, @password, @userType);" : "INSERT INTO ciclurideinvatamant (Ciclu, Definire) VALUES (@ciclu, @definire);";
                     using (var command = new MySqlCommand(query, connection))
                     {
                         if (currentTable == 1)
@@ -194,7 +227,7 @@ namespace UniCatalog
                         }
                         else
                         {
-                            command.Parameters.AddWithValue("@programdestudii", row["Program de studii"]);
+                            command.Parameters.AddWithValue("@ciclu", row["Ciclu"]);
                             command.Parameters.AddWithValue("@definire", row["Definire"]);
                         }
 
@@ -217,7 +250,15 @@ namespace UniCatalog
                 DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
                 DataRowView selectedRowView = (DataRowView)selectedRow.DataBoundItem;
                 DataRow selectedDataRow = selectedRowView.Row;
-                string id = currentTable == 1 ? selectedDataRow["ID"].ToString() : selectedDataRow["Program de studii"].ToString();
+                string id;
+                if (currentTable == 3)
+                {
+                    id = selectedDataRow["Programul"].ToString();
+                }
+                else
+                {
+                    id = currentTable == 1 ? selectedDataRow["ID"].ToString() : selectedDataRow["Ciclu"].ToString();
+                }
 
                 // Delete the row from the database
                 DeleteRowFromDatabase(id);
@@ -235,7 +276,14 @@ namespace UniCatalog
                 {
                     connection.Open();
 
-                    query = currentTable == 1 ? "DELETE FROM conturi WHERE ID = @id;" : "DELETE FROM ciclurideinvatamant  WHERE `Program de studii` = @id;";
+                    if (currentTable == 3)
+                    {
+                        query = "DELETE FROM programedestudii WHERE Programul = @id;";
+                    }
+                    else
+                    {
+                        query = currentTable == 1 ? "DELETE FROM conturi WHERE ID = @id;" : "DELETE FROM ciclurideinvatamant  WHERE Ciclu = @id;";
+                    }
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@id", id);
@@ -261,6 +309,76 @@ namespace UniCatalog
             LoadDataFromDatabase(2);
             currentTable = 2;
             button2.Show();
+            hidestudii();
+        }
+
+        private void programeDeStudiiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadDataFromDatabase(3);
+            currentTable = 3;
+            button2.Show();
+            button1.Show();
+            comboBox1.Show();
+            textBox1.Show();
+            loadComboBox();
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+        }
+
+        private void loadComboBox()
+        {
+            comboBox1.Items.Clear();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+
+                    string query = "SELECT Ciclu FROM ciclurideinvatamant;";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string ciclu = reader.GetString("Ciclu");
+                            comboBox1.Items.Add(ciclu);
+                        }
+                    }
+
+                    Console.WriteLine("Disconnected from the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "INSERT INTO programedestudii (Ciclu, Programul) VALUES (@ciclu, @programul);";
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ciclu", comboBox1.SelectedItem.ToString());
+                        command.Parameters.AddWithValue("@programul", textBox1.Text);
+                        command.ExecuteNonQuery();
+                    }
+
+                    Console.WriteLine("New row inserted into the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            LoadDataFromDatabase(3);
+
         }
     }
 }
