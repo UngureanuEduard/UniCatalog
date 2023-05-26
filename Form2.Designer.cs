@@ -36,12 +36,22 @@
             utilizatoriToolStripMenuItem = new ToolStripMenuItem();
             cicluDeInvatamantToolStripMenuItem = new ToolStripMenuItem();
             programeDeStudiiToolStripMenuItem = new ToolStripMenuItem();
+            planuriDeInvatamantToolStripMenuItem = new ToolStripMenuItem();
+            disciplineToolStripMenuItem = new ToolStripMenuItem();
+            vizualizareToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             dataGridView1 = new DataGridView();
             button2 = new Button();
             comboBox1 = new ComboBox();
             textBox1 = new TextBox();
             button1 = new Button();
+            comboBox2 = new ComboBox();
+            comboBox3 = new ComboBox();
+            comboBox4 = new ComboBox();
+            textBox2 = new TextBox();
+            textBox3 = new TextBox();
+            textBox4 = new TextBox();
+            button3 = new Button();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -72,7 +82,7 @@
             // 
             // optiuniToolStripMenuItem
             // 
-            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem, programeDeStudiiToolStripMenuItem });
+            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem, programeDeStudiiToolStripMenuItem, planuriDeInvatamantToolStripMenuItem });
             optiuniToolStripMenuItem.Name = "optiuniToolStripMenuItem";
             optiuniToolStripMenuItem.Size = new Size(75, 24);
             optiuniToolStripMenuItem.Text = "Options";
@@ -80,23 +90,44 @@
             // utilizatoriToolStripMenuItem
             // 
             utilizatoriToolStripMenuItem.Name = "utilizatoriToolStripMenuItem";
-            utilizatoriToolStripMenuItem.Size = new Size(225, 26);
+            utilizatoriToolStripMenuItem.Size = new Size(236, 26);
             utilizatoriToolStripMenuItem.Text = "Users";
             utilizatoriToolStripMenuItem.Click += utilizatoriToolStripMenuItem_Click;
             // 
             // cicluDeInvatamantToolStripMenuItem
             // 
             cicluDeInvatamantToolStripMenuItem.Name = "cicluDeInvatamantToolStripMenuItem";
-            cicluDeInvatamantToolStripMenuItem.Size = new Size(225, 26);
+            cicluDeInvatamantToolStripMenuItem.Size = new Size(236, 26);
             cicluDeInvatamantToolStripMenuItem.Text = "Ciclu De Invatamant";
             cicluDeInvatamantToolStripMenuItem.Click += cicluDeInvatamantToolStripMenuItem_Click;
             // 
             // programeDeStudiiToolStripMenuItem
             // 
             programeDeStudiiToolStripMenuItem.Name = "programeDeStudiiToolStripMenuItem";
-            programeDeStudiiToolStripMenuItem.Size = new Size(225, 26);
+            programeDeStudiiToolStripMenuItem.Size = new Size(236, 26);
             programeDeStudiiToolStripMenuItem.Text = "Programe De Studii";
             programeDeStudiiToolStripMenuItem.Click += programeDeStudiiToolStripMenuItem_Click;
+            // 
+            // planuriDeInvatamantToolStripMenuItem
+            // 
+            planuriDeInvatamantToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { disciplineToolStripMenuItem, vizualizareToolStripMenuItem });
+            planuriDeInvatamantToolStripMenuItem.Name = "planuriDeInvatamantToolStripMenuItem";
+            planuriDeInvatamantToolStripMenuItem.Size = new Size(236, 26);
+            planuriDeInvatamantToolStripMenuItem.Text = "Planuri de Invatamant";
+            // 
+            // disciplineToolStripMenuItem
+            // 
+            disciplineToolStripMenuItem.Name = "disciplineToolStripMenuItem";
+            disciplineToolStripMenuItem.Size = new Size(164, 26);
+            disciplineToolStripMenuItem.Text = "Discipline";
+            disciplineToolStripMenuItem.Click += disciplineToolStripMenuItem_Click;
+            // 
+            // vizualizareToolStripMenuItem
+            // 
+            vizualizareToolStripMenuItem.Name = "vizualizareToolStripMenuItem";
+            vizualizareToolStripMenuItem.Size = new Size(164, 26);
+            vizualizareToolStripMenuItem.Text = "Vizualizare";
+            vizualizareToolStripMenuItem.Click += vizualizareToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -130,22 +161,24 @@
             // 
             // comboBox1
             // 
+            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
             comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(627, 65);
+            comboBox1.Location = new Point(627, 31);
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(151, 28);
             comboBox1.TabIndex = 6;
+            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
             // 
             // textBox1
             // 
-            textBox1.Location = new Point(627, 99);
+            textBox1.Location = new Point(627, 65);
             textBox1.Name = "textBox1";
             textBox1.Size = new Size(151, 27);
             textBox1.TabIndex = 7;
             // 
             // button1
             // 
-            button1.Location = new Point(656, 146);
+            button1.Location = new Point(656, 167);
             button1.Name = "button1";
             button1.Size = new Size(94, 29);
             button1.TabIndex = 8;
@@ -153,11 +186,81 @@
             button1.UseVisualStyleBackColor = true;
             button1.Click += button1_Click;
             // 
+            // comboBox2
+            // 
+            comboBox2.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox2.FormattingEnabled = true;
+            comboBox2.Location = new Point(627, 99);
+            comboBox2.Name = "comboBox2";
+            comboBox2.Size = new Size(151, 28);
+            comboBox2.TabIndex = 9;
+            // 
+            // comboBox3
+            // 
+            comboBox3.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox3.FormattingEnabled = true;
+            comboBox3.Location = new Point(627, 65);
+            comboBox3.Name = "comboBox3";
+            comboBox3.Size = new Size(151, 28);
+            comboBox3.TabIndex = 10;
+            comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
+            // 
+            // comboBox4
+            // 
+            comboBox4.DisplayMember = "A,B";
+            comboBox4.DropDownStyle = ComboBoxStyle.DropDownList;
+            comboBox4.FormattingEnabled = true;
+            comboBox4.Location = new Point(627, 133);
+            comboBox4.Name = "comboBox4";
+            comboBox4.Size = new Size(151, 28);
+            comboBox4.TabIndex = 11;
+            // 
+            // textBox2
+            // 
+            textBox2.Location = new Point(641, 219);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(125, 27);
+            textBox2.TabIndex = 12;
+            textBox2.Click += textBox2_Click;
+            // 
+            // textBox3
+            // 
+            textBox3.Location = new Point(641, 252);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(125, 27);
+            textBox3.TabIndex = 13;
+            textBox3.Click += textBox2_Click;
+            // 
+            // textBox4
+            // 
+            textBox4.Location = new Point(641, 285);
+            textBox4.Name = "textBox4";
+            textBox4.Size = new Size(125, 27);
+            textBox4.TabIndex = 14;
+            textBox4.Click += textBox2_Click;
+            // 
+            // button3
+            // 
+            button3.Location = new Point(656, 318);
+            button3.Name = "button3";
+            button3.Size = new Size(94, 29);
+            button3.TabIndex = 15;
+            button3.Text = "Insert";
+            button3.UseVisualStyleBackColor = true;
+            button3.Click += button3_Click;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 450);
+            Controls.Add(button3);
+            Controls.Add(textBox4);
+            Controls.Add(textBox3);
+            Controls.Add(textBox2);
+            Controls.Add(comboBox4);
+            Controls.Add(comboBox3);
+            Controls.Add(comboBox2);
             Controls.Add(button1);
             Controls.Add(textBox1);
             Controls.Add(comboBox1);
@@ -191,5 +294,15 @@
         private TextBox textBox1;
         private Button button1;
         private ToolStripMenuItem programeDeStudiiToolStripMenuItem;
+        private ComboBox comboBox2;
+        private ToolStripMenuItem planuriDeInvatamantToolStripMenuItem;
+        private ToolStripMenuItem disciplineToolStripMenuItem;
+        private ToolStripMenuItem vizualizareToolStripMenuItem;
+        private ComboBox comboBox3;
+        private ComboBox comboBox4;
+        private TextBox textBox2;
+        private TextBox textBox3;
+        private TextBox textBox4;
+        private Button button3;
     }
 }

@@ -28,14 +28,27 @@ namespace UniCatalog
 
         private void Form2_Load(object sender, EventArgs e)
         {
+            comboBox3.Hide();
+            comboBox4.Hide();
             button2.Hide();
             hidestudii();
+            comboBox4.Items.Add("A");
+            comboBox4.Items.Add("B");
+
         }
         private void hidestudii()
         {
             comboBox1.Hide();
             textBox1.Hide();
             button1.Hide();
+            comboBox2.Hide();
+            comboBox4.Hide();
+            comboBox3.Hide();
+            textBox2.Hide();
+            textBox3.Hide();
+            textBox4.Hide();
+            button3.Hide();
+
         }
 
         private void LoadDataFromDatabase(int operatie)
@@ -59,6 +72,10 @@ namespace UniCatalog
                     else if (operatie == 3)
                     {
                         query = "SELECT * FROM programedestudii;";
+                    }
+                    else if (operatie == 4)
+                    {
+                        query = "SELECT * FROM discipline;";
                     }
                     using (var command = new MySqlCommand(query, connection))
                     using (var reader = command.ExecuteReader())
@@ -96,8 +113,8 @@ namespace UniCatalog
                     {
                         // Get the modified values from the DataGridView
                         string ciclu = row["Ciclu"].ToString();
-                        string definire = row["Definire"].ToString();
-                        UpdateRowInDatabase(ciclu, definire, definire, 0);
+                        string acronim = row["Acronim"].ToString();
+                        UpdateRowInDatabase(ciclu, acronim, acronim, 0);
                     }
                 }
             }
@@ -118,7 +135,7 @@ namespace UniCatalog
                     if (userType != 0)
                         query = "UPDATE conturi SET User = @username, Password = @password, `User Type` = @userType WHERE ID = @id;";
                     else
-                        query = "UPDATE ciclurideinvatamant SET Ciclu = @id, Definire = @username WHERE Ciclu = @id OR Definire = @username;";
+                        query = "UPDATE ciclurideinvatamant SET Ciclu = @id, Acronim = @username WHERE Ciclu = @id OR Acronim = @username;";
                     using (var command = new MySqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@username", username);
@@ -164,9 +181,9 @@ namespace UniCatalog
                 else
                 {
                     string ciclu = "Ciclu Nou";
-                    string definire = "Descriere noua";
+                    string acronim = "Acronim nou";
                     newRow["Ciclu"] = ciclu;
-                    newRow["Definire"] = definire;
+                    newRow["Acronim"] = acronim;
                 }
 
                 dataTable.Rows.Add(newRow);
@@ -215,7 +232,7 @@ namespace UniCatalog
                 using (var connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-                    query = currentTable == 1 ? "INSERT INTO conturi (ID, User, Password, `User Type`) VALUES (@id, @username, @password, @userType);" : "INSERT INTO ciclurideinvatamant (Ciclu, Definire) VALUES (@ciclu, @definire);";
+                    query = currentTable == 1 ? "INSERT INTO conturi (ID, User, Password, `User Type`) VALUES (@id, @username, @password, @userType);" : "INSERT INTO ciclurideinvatamant (Ciclu, Acronim) VALUES (@ciclu, @acronim);";
                     using (var command = new MySqlCommand(query, connection))
                     {
                         if (currentTable == 1)
@@ -228,7 +245,7 @@ namespace UniCatalog
                         else
                         {
                             command.Parameters.AddWithValue("@ciclu", row["Ciclu"]);
-                            command.Parameters.AddWithValue("@definire", row["Definire"]);
+                            command.Parameters.AddWithValue("@acronim", row["Acronim"]);
                         }
 
                         command.ExecuteNonQuery();
@@ -314,13 +331,17 @@ namespace UniCatalog
 
         private void programeDeStudiiToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            button1.Text = "Insert";
             LoadDataFromDatabase(3);
             currentTable = 3;
             button2.Show();
             button1.Show();
             comboBox1.Show();
             textBox1.Show();
+            comboBox2.Show();
             loadComboBox();
+            comboBox4.Hide();
+            comboBox3.Hide();
             dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
@@ -353,32 +374,274 @@ namespace UniCatalog
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
+
+            int[] numbers = { 3, 4 };
+
+            foreach (int number in numbers)
+            {
+                comboBox2.Items.Add(number);
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            if (currentTable != 4)
+            {
+                try
+                {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string query = "INSERT INTO programedestudii (Ciclu, Programul,Durata) VALUES (@ciclu, @programul,@durata);";
+                        using (var command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@ciclu", comboBox1.SelectedItem.ToString());
+                            command.Parameters.AddWithValue("@programul", textBox1.Text);
+                            command.Parameters.AddWithValue("@durata", comboBox2.SelectedIndex + 2);
+                            command.ExecuteNonQuery();
+                        }
+
+                        Console.WriteLine("New row inserted into the database.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                LoadDataFromDatabase(3);
+
+            }
+            else if (currentTable == 4)
+            {
+                if (comboBox1.SelectedItem != null && comboBox2.SelectedItem != null && comboBox3.SelectedItem != null && comboBox4.SelectedItem != null && button1.Text == "Check")
+                {
+                    comboBox1.Enabled = false;
+                    comboBox2.Enabled = false;
+                    comboBox3.Enabled = false;
+                    comboBox4.Enabled = false;
+                    textBox2.Show();
+                    textBox3.Show();
+                    textBox4.Show();
+                    button3.Show();
+                    button1.Text = "Uncheck";
+                    textboxload();
+                }
+                else if (button1.Text == "Uncheck")
+                {
+                    comboBox1.Enabled = true;
+                    comboBox2.Enabled = true;
+                    comboBox3.Enabled = true;
+                    comboBox4.Enabled = true;
+                    textBox2.Hide();
+                    textBox3.Hide();
+                    textBox4.Hide();
+                    button3.Hide();
+                    button1.Text = "Check";
+                }
+                else
+                {
+                    MessageBox.Show("Select every field", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
+
+
+        }
+
+        private void vizualizareToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+
+
+        }
+
+        private void disciplineToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            currentTable = 4;
+            textBox1.Hide();
+            comboBox3.Show();
+            comboBox1.Show();
+            comboBox4.Show();
+            comboBox2.Show();
+            button1.Show();
+            button2.Show();
+            LoadDataFromDatabase(currentTable);
+            LoadComboDiscipline();
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            button1.Text = "Check";
+        }
+
+        private void LoadComboDiscipline()
+        {
+            comboBox1.Items.Clear();
+            comboBox2.Items.Clear();
+            comboBox3.Items.Clear();
+
+
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "INSERT INTO programedestudii (Ciclu, Programul) VALUES (@ciclu, @programul);";
+                    Console.WriteLine("Connected to the database.");
+
+                    string query = "SELECT DISTINCT Ciclu FROM programedestudii;";
+
                     using (var command = new MySqlCommand(query, connection))
+                    using (var reader = command.ExecuteReader())
                     {
-                        command.Parameters.AddWithValue("@ciclu", comboBox1.SelectedItem.ToString());
-                        command.Parameters.AddWithValue("@programul", textBox1.Text);
-                        command.ExecuteNonQuery();
+                        while (reader.Read())
+                        {
+                            string ciclu = reader.GetString("Ciclu");
+                            comboBox1.Items.Add(ciclu);
+
+                        }
                     }
 
-                    Console.WriteLine("New row inserted into the database.");
+
+                    Console.WriteLine("Disconnected from the database.");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
-            LoadDataFromDatabase(3);
 
         }
+
+        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if (currentTable == 4)
+            {
+                comboBox3.Items.Clear();
+                try
+                {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        Console.WriteLine("Connected to the database.");
+
+                        string query = "SELECT Programul FROM programedestudii WHERE Ciclu = @ciclu;";
+
+                        using (var command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@ciclu", comboBox1.SelectedItem.ToString());
+                            using (var reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string program = reader.GetString("Programul");
+                                    comboBox3.Items.Add(program);
+
+                                }
+                            }
+
+                        }
+                        Console.WriteLine("Disconnected from the database.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+
+            }
+
+        }
+
+        private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            comboBox2.Items.Clear();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+
+                    string query = "SELECT Durata FROM programedestudii WHERE Ciclu = @ciclu AND Programul = @program;";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@ciclu", comboBox1.SelectedItem.ToString());
+                        command.Parameters.AddWithValue("@program", comboBox3.SelectedItem.ToString());
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                int an = reader.GetInt16("Durata");
+                                for (int i = 1; i <= an; i++)
+                                    comboBox2.Items.Add(i);
+                            }
+                        }
+                    }
+
+                    Console.WriteLine("Disconnected from the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+        private void textboxload()
+        {
+            textBox2.Text = "Nume";
+            textBox2.ForeColor = System.Drawing.SystemColors.GrayText;
+            textBox3.Text = "Acronim";
+            textBox3.ForeColor = System.Drawing.SystemColors.GrayText;
+            textBox4.Text = "Credite";
+            textBox4.ForeColor = System.Drawing.SystemColors.GrayText;
+
+        }
+        private void textBox2_Click(object sender, EventArgs e)
+        {
+            TextBox textBox = (TextBox)sender;
+            textBox.ForeColor = System.Drawing.SystemColors.WindowText;
+            textBox.Clear();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            if (textBox2.Text != null && textBox3.Text != null && textBox4.Text != null)
+            {
+
+                String Ciclu = comboBox1.SelectedItem.ToString();
+                String Programul = comboBox3.SelectedItem.ToString();
+                int An = int.Parse(comboBox2.SelectedItem.ToString());
+                String Semestru = comboBox4.SelectedItem.ToString();
+                String cod = String.Concat(String.Concat(Ciclu.Substring(0, 1)[0], Programul.Substring(0, 2)) + An, Semestru);
+                int nr = codCheck(cod);     // nu merge ba , repara 
+                button3.Text = cod + nr;
+            }
+            else
+            {
+                MessageBox.Show("Complete the fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+        private int codCheck(string a)
+        {
+            int cod = 0;
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT MAX(SUBSTRING(cod, CHAR_LENGTH(Cod))) FROM discipline WHERE cod LIKE @cod% ;"; //prob deasta
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@cod", a);
+                        object result = command.ExecuteScalar();
+                        
+                    }
+
+                    Console.WriteLine("Max ID retrieved from the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            return cod;
+        }
+
     }
 }
