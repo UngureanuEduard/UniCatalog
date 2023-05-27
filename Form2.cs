@@ -5,7 +5,7 @@ namespace UniCatalog
 {
     public partial class Form2 : Form
     {
-        private DataTable dataTable, dataTable1;
+        private DataTable dataTable;
         private string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
         private string query;
         private int currentTable;
@@ -20,7 +20,6 @@ namespace UniCatalog
         {
             LoadDataFromDatabase(1);
             currentTable = 1;
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             dataGridView1.Columns["ID"].Visible = false;
             button2.Show();
             hidestudii();
@@ -32,10 +31,9 @@ namespace UniCatalog
             comboBox4.Hide();
             button2.Hide();
             hidestudii();
-            comboBox4.Items.Add("A");
-            comboBox4.Items.Add("B");
-
+            comboBox4.Items.AddRange(new string[] { "A", "B" });
         }
+
         private void hidestudii()
         {
             comboBox1.Hide();
@@ -48,11 +46,11 @@ namespace UniCatalog
             textBox3.Hide();
             textBox4.Hide();
             button3.Hide();
-
         }
 
         private void LoadDataFromDatabase(int operatie)
         {
+            dataGridView1.Enabled = true;
             dataTable = new DataTable();
             try
             {
@@ -60,23 +58,16 @@ namespace UniCatalog
                 {
                     connection.Open();
                     Console.WriteLine("Connected to the database.");
-                    if (operatie == 1)
-                    {
-                        query = "SELECT * FROM conturi;";
-                    }
-                    else if (operatie == 2)
-                    {
-                        query = "SELECT * FROM ciclurideinvatamant;";
 
-                    }
-                    else if (operatie == 3)
+                    query = operatie switch
                     {
-                        query = "SELECT * FROM programedestudii;";
-                    }
-                    else if (operatie == 4)
-                    {
-                        query = "SELECT * FROM discipline;";
-                    }
+                        1 => "SELECT * FROM conturi;",
+                        2 => "SELECT * FROM ciclurideinvatamant;",
+                        3 => "SELECT * FROM programedestudii;",
+                        4 => "SELECT * FROM discipline;",
+                        _ => query
+                    };
+
                     using (var command = new MySqlCommand(query, connection))
                     using (var reader = command.ExecuteReader())
                     {
@@ -90,11 +81,12 @@ namespace UniCatalog
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
+            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void dataGridView1_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
-            if (currentTable != 3)
+            if (currentTable != 3 && currentTable != 4)
             {
                 int rowIndex = e.RowIndex;
                 if (rowIndex >= 0 && rowIndex < dataTable.Rows.Count)
@@ -160,7 +152,7 @@ namespace UniCatalog
         private void dataGridView1_UserAddedRow(object sender, DataGridViewRowEventArgs e)
         {
             DataRow newRow = dataTable.NewRow();
-            if (currentTable != 3)
+            if (currentTable != 3 && currentTable != 4)
             {
                 if (currentTable == 1)
                 {
@@ -262,7 +254,7 @@ namespace UniCatalog
 
         private void button2_Click(object sender, EventArgs e)
         {
-            if (dataGridView1.SelectedRows.Count > 0)
+            if (dataGridView1.SelectedRows.Count > 0 && currentTable != 5)
             {
                 DataGridViewRow selectedRow = dataGridView1.SelectedRows[0];
                 DataRowView selectedRowView = (DataRowView)selectedRow.DataBoundItem;
@@ -272,16 +264,25 @@ namespace UniCatalog
                 {
                     id = selectedDataRow["Programul"].ToString();
                 }
+                else if (currentTable == 4)
+                {
+                    id = selectedDataRow["Cod"].ToString();
+                }
                 else
                 {
                     id = currentTable == 1 ? selectedDataRow["ID"].ToString() : selectedDataRow["Ciclu"].ToString();
                 }
+
 
                 // Delete the row from the database
                 DeleteRowFromDatabase(id);
 
                 // Delete the row from the DataTable
                 dataTable.Rows.Remove(selectedDataRow);
+            }
+            else
+            {
+                MessageBox.Show("You can only view , not delete!", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -296,6 +297,10 @@ namespace UniCatalog
                     if (currentTable == 3)
                     {
                         query = "DELETE FROM programedestudii WHERE Programul = @id;";
+                    }
+                    else if (currentTable == 4)
+                    {
+                        query = "DELETE FROM discipline WHERE Cod = @id;";
                     }
                     else
                     {
@@ -342,7 +347,6 @@ namespace UniCatalog
             loadComboBox();
             comboBox4.Hide();
             comboBox3.Hide();
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
         }
 
         private void loadComboBox()
@@ -385,7 +389,7 @@ namespace UniCatalog
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (currentTable != 4)
+            if (currentTable == 3)
             {
                 try
                 {
@@ -443,29 +447,43 @@ namespace UniCatalog
                     MessageBox.Show("Select every field", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            else if (currentTable == 5)
+            {
+                if (comboBox1.SelectedItem != null && comboBox2.SelectedItem != null && comboBox3.SelectedItem != null && comboBox4.SelectedItem != null)
+                {
+                    String Ciclu = comboBox1.SelectedItem.ToString();
+                    String Programul = comboBox3.SelectedItem.ToString();
+                    int An = int.Parse(comboBox2.SelectedItem.ToString());
+                    String Semestru = comboBox4.SelectedItem.ToString();
+                    String cod = String.Concat(String.Concat(Ciclu.Substring(0, 1)[0], Programul.Substring(0, 2)) + An, Semestru);
+                    query = $"SELECT * FROM discipline WHERE Cod like '{cod}%';";
+                    LoadDataFromDatabase(5);
+                    dataGridView1.Enabled = false;
+                }
+                else
+                {
+                    MessageBox.Show("Select Every Field", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                }
+            }
 
 
         }
 
         private void vizualizareToolStripMenuItem_Click(object sender, EventArgs e)
         {
-
-
+            currentTable = 5;
+            SetControlsVisibility(true, true, true, true, false);
+            LoadComboDiscipline();
+            button1.Text = "Check";
+            dataGridView1.Enabled = false;
         }
 
         private void disciplineToolStripMenuItem_Click(object sender, EventArgs e)
         {
             currentTable = 4;
-            textBox1.Hide();
-            comboBox3.Show();
-            comboBox1.Show();
-            comboBox4.Show();
-            comboBox2.Show();
-            button1.Show();
-            button2.Show();
+            SetControlsVisibility(true, true, true, true, true);
             LoadDataFromDatabase(currentTable);
             LoadComboDiscipline();
-            dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             button1.Text = "Check";
         }
 
@@ -474,7 +492,6 @@ namespace UniCatalog
             comboBox1.Items.Clear();
             comboBox2.Items.Clear();
             comboBox3.Items.Clear();
-
 
             try
             {
@@ -492,10 +509,8 @@ namespace UniCatalog
                         {
                             string ciclu = reader.GetString("Ciclu");
                             comboBox1.Items.Add(ciclu);
-
                         }
                     }
-
 
                     Console.WriteLine("Disconnected from the database.");
                 }
@@ -504,12 +519,11 @@ namespace UniCatalog
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
-
         }
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (currentTable == 4)
+            if (currentTable == 4 || currentTable == 5)
             {
                 comboBox3.Items.Clear();
                 try
@@ -530,11 +544,10 @@ namespace UniCatalog
                                 {
                                     string program = reader.GetString("Programul");
                                     comboBox3.Items.Add(program);
-
                                 }
                             }
-
                         }
+
                         Console.WriteLine("Disconnected from the database.");
                     }
                 }
@@ -542,9 +555,7 @@ namespace UniCatalog
                 {
                     Console.WriteLine("Error: " + ex.Message);
                 }
-
             }
-
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
@@ -582,6 +593,7 @@ namespace UniCatalog
                 Console.WriteLine("Error: " + ex.Message);
             }
         }
+
         private void textboxload()
         {
             textBox2.Text = "Nume";
@@ -590,8 +602,8 @@ namespace UniCatalog
             textBox3.ForeColor = System.Drawing.SystemColors.GrayText;
             textBox4.Text = "Credite";
             textBox4.ForeColor = System.Drawing.SystemColors.GrayText;
-
         }
+
         private void textBox2_Click(object sender, EventArgs e)
         {
             TextBox textBox = (TextBox)sender;
@@ -601,7 +613,7 @@ namespace UniCatalog
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (textBox2.Text != null && textBox3.Text != null && textBox4.Text != null)
+            if (!string.IsNullOrEmpty(textBox2.Text) && !string.IsNullOrEmpty(textBox3.Text) && !string.IsNullOrEmpty(textBox4.Text) && textBox2.Text != "Nume" && textBox3.Text != "Acronim" && textBox4.Text != "Credite")
             {
 
                 String Ciclu = comboBox1.SelectedItem.ToString();
@@ -609,28 +621,52 @@ namespace UniCatalog
                 int An = int.Parse(comboBox2.SelectedItem.ToString());
                 String Semestru = comboBox4.SelectedItem.ToString();
                 String cod = String.Concat(String.Concat(Ciclu.Substring(0, 1)[0], Programul.Substring(0, 2)) + An, Semestru);
-                int nr = codCheck(cod);     // nu merge ba , repara 
-                button3.Text = cod + nr;
+                cod = cod + codCheck(cod);  // check the last number for the last disciplina
+                try
+                {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        string query = "INSERT INTO discipline (Cod, Nume, Acronim, Credite) VALUES (@cod, @nume, @acronim, @credite);";
+                        using (var command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@cod", cod);
+                            command.Parameters.AddWithValue("@nume", textBox2.Text);
+                            command.Parameters.AddWithValue("@acronim", textBox3.Text);
+                            command.Parameters.AddWithValue("@credite", textBox4.Text);
+                            command.ExecuteNonQuery();
+                        }
+
+                        Console.WriteLine("New row inserted into the database.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                LoadDataFromDatabase(4);
             }
             else
             {
                 MessageBox.Show("Complete the fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-        private int codCheck(string a)
+
+        private int codCheck(string prefix)
         {
             int cod = 0;
+
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
                 {
                     connection.Open();
-                    string query = "SELECT MAX(SUBSTRING(cod, CHAR_LENGTH(Cod))) FROM discipline WHERE cod LIKE @cod% ;"; //prob deasta
+                    string query = $"SELECT MAX(CAST(SUBSTRING(Cod, CHAR_LENGTH(Cod)) AS UNSIGNED)) FROM discipline WHERE Cod LIKE '{prefix}%';";
                     using (var command = new MySqlCommand(query, connection))
                     {
-                        command.Parameters.AddWithValue("@cod", a);
                         object result = command.ExecuteScalar();
-                        
+                        if (result != DBNull.Value)
+                            cod = Convert.ToInt32(result);
                     }
 
                     Console.WriteLine("Max ID retrieved from the database.");
@@ -640,7 +676,20 @@ namespace UniCatalog
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
-            return cod;
+
+            return cod + 1;
+        }
+
+        private void SetControlsVisibility(bool textBox1Visible, bool comboBox3Visible, bool comboBox1Visible, bool comboBox4Visible, bool button2Visible)
+        {
+            textBox1.Visible = textBox1Visible;
+            comboBox3.Visible = comboBox3Visible;
+            comboBox1.Visible = comboBox1Visible;
+            comboBox4.Visible = comboBox4Visible;
+            comboBox2.Visible = true;
+            button1.Visible = true;
+            button2.Visible = button2Visible;
+            dataGridView1.Enabled = false;
         }
 
     }
