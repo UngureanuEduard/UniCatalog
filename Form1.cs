@@ -4,7 +4,7 @@ namespace UniCatalog
 {
     public partial class Form1 : Form
     {
-        private Form currentForm;
+        private Form? currentForm;
         private List<Account> accountList;
 
         public Form1()
@@ -66,89 +66,16 @@ namespace UniCatalog
                 if (account.User == username && account.Password == password)
                 {
                     found = account.UserType;
-                    textBox1.Enabled = false;
-                    textBox2.Enabled = false;
+                    Form2 form2 = new Form2();
+                    form2.Number = found;
+                    form2.Show();
+                    this.Hide();
                     break;
                 }
             }
-
-            if (comboBox1.Items.Count != 0)
-            {
-                switch (comboBox1.SelectedItem.ToString())
-                {
-                    case "Admin":
-                        found = 1;
-                        break;
-                    case "Secretar":
-                        found = 10;
-                        break;
-                    default:
-                        found = 100;
-                        break;
-                }
-            }
-
-            if (found == 1 || found == 10 || found == 100)
-            {
-                switch (found)
-                {
-                    case 1:
-                        currentForm = new Form2();
-                        break;
-                    case 10:
-                        currentForm = new Form3();
-                        break;
-                    case 100:
-                        currentForm = new Form4();
-                        break;
-                }
-                Hide();
-                currentForm.FormClosed += CurrentForm_FormClosed;
-                currentForm.Show();
-            }
-            else if (found != 0)
-            {
-                label3.Show();
-                comboBox1.Show();
-                switch (found)
-                {
-                    case 011:
-                        comboBox1.Items.Add("Admin");
-                        comboBox1.Items.Add("Secretar");
-                        break;
-                    case 110:
-                        comboBox1.Items.Add("Cadru Didactic");
-                        comboBox1.Items.Add("Secretar");
-                        break;
-                    case 101:
-                        comboBox1.Items.Add("Admin");
-                        comboBox1.Items.Add("Cadru Didactic");
-                        break;
-                    case 111:
-                        comboBox1.Items.Add("Admin");
-                        comboBox1.Items.Add("Cadru Didactic");
-                        comboBox1.Items.Add("Secretar");
-                        break;
-                }
-            }
-            else
+            if (found == 0)
             {
                 MessageBox.Show("Invalid username or password.");
-            }
-        }
-
-        private void CurrentForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (sender == currentForm)
-            {
-                if (currentForm is Form1)
-                {
-                    Application.Exit();
-                }
-                else
-                {
-                    Show();
-                }
             }
         }
     }

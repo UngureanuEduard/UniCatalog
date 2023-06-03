@@ -5,6 +5,7 @@ namespace UniCatalog
 {
     public partial class Form2 : Form
     {
+        public int Number { get; set; }
         private DataTable dataTable;
         private string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
         private string query;
@@ -32,6 +33,17 @@ namespace UniCatalog
             button2.Hide();
             hidestudii();
             comboBox4.Items.AddRange(new string[] { "A", "B" });
+            foreach (ToolStripItem item in optiuniToolStripMenuItem.DropDownItems)
+            {
+                item.Visible = false;
+            }
+            if (Number % 10 == 1)
+            {
+                utilizatoriToolStripMenuItem.Visible = true;
+                cicluDeInvatamantToolStripMenuItem.Visible = true;
+                programeDeStudiiToolStripMenuItem.Visible = true;
+                planuriDeInvatamantToolStripMenuItem.Visible = true;
+            }
         }
 
         private void hidestudii()
