@@ -8,7 +8,7 @@ namespace UniCatalog
         public int Number { get; set; }
         private DataTable dataTable;
         private string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
-        private string query;
+        private string? query;
         private int currentTable;
 
         public Form2()
@@ -43,6 +43,8 @@ namespace UniCatalog
                 cicluDeInvatamantToolStripMenuItem.Visible = true;
                 programeDeStudiiToolStripMenuItem.Visible = true;
                 planuriDeInvatamantToolStripMenuItem.Visible = true;
+                studentiToolStripMenuItem.Visible = true;
+                grupeToolStripMenuItem.Visible = true;
             }
         }
 
@@ -80,6 +82,8 @@ namespace UniCatalog
                         2 => "SELECT * FROM ciclurideinvatamant;",
                         3 => "SELECT * FROM programedestudii;",
                         4 => "SELECT * FROM discipline;",
+                        7 => "SELECT * FROM student;",
+                        8 => "Select * FROM grupe",
                         _ => query
                     };
 
@@ -110,18 +114,32 @@ namespace UniCatalog
                     if (currentTable == 1)
                     {
                         // Get the modified values from the DataGridView
-                        string id = row["ID"].ToString();
-                        string username = row["User"].ToString();
-                        string password = row["Password"].ToString();
+                        string? id = row["ID"].ToString();
+                        string? username = row["User"].ToString();
+                        string? password = row["Password"].ToString();
                         int userType = Convert.ToInt32(row["User Type"]);
-                        UpdateRowInDatabase(id, username, password, userType);
+                        string? materie = row["MaterieTitular"].ToString();
+                        UpdateRowInDatabase(id, username, password, userType,materie);
+                    }
+                    else if (currentTable == 7)
+                    {
+                        string? nrmat = row["Nr. Matricol"].ToString();
+                        string? nume = row["Nume"].ToString();
+                        string? prenume = row["Prenume"].ToString();
+                        string? initialaTata = row["Initiala Tatalui"].ToString();
+                        long cnp = Convert.ToInt64(row["CNP"]);
+                        DateTime dataInscrierii = (DateTime)row["Data Inscrierii"];
+                        string? cicluInvatamant = row["Ciclu de invatamant"].ToString();
+                        double medieInscriere = Convert.ToDouble(row["Media Inscriere"]);
+                        string grupa = row["Grupa"].ToString();
+                        UpdateRowInTableStudent(nrmat, nume, prenume, initialaTata, cnp, dataInscrierii, cicluInvatamant, medieInscriere, grupa);
                     }
                     else
                     {
                         // Get the modified values from the DataGridView
                         string ciclu = row["Ciclu"].ToString();
                         string acronim = row["Acronim"].ToString();
-                        UpdateRowInDatabase(ciclu, acronim, acronim, 0);
+                        UpdateRowInDatabase(ciclu, acronim, acronim, 0 , null);
                     }
                 }
             }
@@ -131,7 +149,7 @@ namespace UniCatalog
             }
         }
 
-        private void UpdateRowInDatabase(string id, string username, string password, int userType)
+        private void UpdateRowInDatabase(string id, string username, string password, int userType,string materie)
         {
 
             try
@@ -140,7 +158,7 @@ namespace UniCatalog
                 {
                     connection.Open();
                     if (userType != 0)
-                        query = "UPDATE conturi SET User = @username, Password = @password, `User Type` = @userType WHERE ID = @id;";
+                        query = "UPDATE conturi SET User = @username, Password = @password, `User Type` = @userType, `MaterieTitular`=@materie WHERE ID = @id;";
                     else
                         query = "UPDATE ciclurideinvatamant SET Ciclu = @id, Acronim = @username WHERE Ciclu = @id OR Acronim = @username;";
                     using (var command = new MySqlCommand(query, connection))
@@ -148,10 +166,47 @@ namespace UniCatalog
                         command.Parameters.AddWithValue("@username", username);
                         if (userType != 0)
                         {
+                            command.Parameters.AddWithValue("@materie", materie);
                             command.Parameters.AddWithValue("@password", password);
                             command.Parameters.AddWithValue("@userType", userType);
                         }
                         command.Parameters.AddWithValue("@id", id);
+                        command.ExecuteNonQuery();
+                    }
+                    Console.WriteLine("Database updated successfully.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+        }
+
+        private void UpdateRowInTableStudent(string nrmat, string nume, string prenume, string initialaTata, long cnp,
+            DateTime dataInscrierii, string cicluInvatamant, double medieInscriere, string grupa)
+        {
+
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+
+                    query = "UPDATE student SET `Nr. Matricol` = @nrmat, Nume = @nume, Prenume = @prenume,`Initiala Tatalui` = @initialaTata, CNP = @cnp, `Data Inscrierii` =  @dataInscrierii,`Ciclu de invatamant` = @cicluInvatamant, `Media Inscriere`=@medieInscriere, Grupa=@grupa  WHERE `Nr. Matricol` = @nrmat OR  CNP = @cnp";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@nrmat", nrmat);
+                        command.Parameters.AddWithValue("@nume", nume);
+                        command.Parameters.AddWithValue("@prenume", prenume);
+                        command.Parameters.AddWithValue("@initialaTata", initialaTata);
+                        command.Parameters.AddWithValue("@cnp", cnp);
+                        command.Parameters.AddWithValue("@dataInscrierii", dataInscrierii);
+                        command.Parameters.AddWithValue("@cicluInvatamant", cicluInvatamant);
+                        command.Parameters.AddWithValue("@medieInscriere", medieInscriere);
+                        command.Parameters.AddWithValue("@grupa", grupa);
+
                         command.ExecuteNonQuery();
                     }
                     Console.WriteLine("Database updated successfully.");
@@ -185,6 +240,17 @@ namespace UniCatalog
                     newRow["Password"] = password;
                     newRow["User Type"] = userType;
                 }
+                else if (currentTable == 7)
+                {
+                    newRow["Nr. Matricol"] = 0;
+                    newRow["Nume"] = "Nume";
+                    newRow["Prenume"] = "Prenume";
+                    newRow["Initiala Tatalui"] = "A";
+                    newRow["CNP"] = 1234;
+                    newRow["Data Inscrierii"] = new DateTime(2023, 6, 1);
+                    newRow["Ciclu de invatamant"] = "Zi";
+                    newRow["Media inscriere"] = 0;
+                }
                 else
                 {
                     string ciclu = "Ciclu Nou";
@@ -196,7 +262,10 @@ namespace UniCatalog
                 dataTable.Rows.Add(newRow);
 
                 // Insert the new row into the database
-                InsertRowIntoDatabase(newRow);
+                if (currentTable != 7)
+                    InsertRowIntoDatabase(newRow);
+                else
+                    InsertRowIntoTableStudent(newRow);
             }
             else
             {
@@ -267,6 +336,37 @@ namespace UniCatalog
             }
         }
 
+        private void InsertRowIntoTableStudent(DataRow row)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    query = "INSERT INTO student (`Nr. Matricol`, Nume, Prenume, `Initiala Tatalui`, CNP, `Data Inscrierii`, `Ciclu de invatamant`, `Media Inscriere`) VALUES (@nrmat, @nume, @prenume, @initialaTata, @cnp, @dataInscrierii, @cicluInvatamant, @medieInscriere);";
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@nrmat", row["Nr. MatricoL"]);
+                        command.Parameters.AddWithValue("@nume", row["Nume"]);
+                        command.Parameters.AddWithValue("@prenume", row["Prenume"]);
+                        command.Parameters.AddWithValue("@initialaTata", row["Initiala Tatalui"]);
+                        command.Parameters.AddWithValue("@cnp", row["CNP"]);
+                        command.Parameters.AddWithValue("@dataInscrierii", row["Data Inscrierii"]);
+                        command.Parameters.AddWithValue("@cicluInvatamant", row["Ciclu de invatamant"]);
+                        command.Parameters.AddWithValue("@medieInscriere", row["Media Inscriere"]);
+
+                        command.ExecuteNonQuery();
+                    }
+
+                    Console.WriteLine("New row inserted into the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+
         private void button2_Click(object sender, EventArgs e)
         {
             if (dataGridView1.SelectedRows.Count > 0 && currentTable != 5)
@@ -282,6 +382,18 @@ namespace UniCatalog
                 else if (currentTable == 4)
                 {
                     id = selectedDataRow["Cod"].ToString();
+                }
+                else if (currentTable == 7)
+                {
+                    id = selectedDataRow["Nr. Matricol"].ToString();
+                }
+                else if (currentTable == 8)
+                {
+                    id = selectedDataRow["Cod"].ToString();
+                }
+                else if (currentTable == 10)
+                {
+                    id = selectedDataRow["Nr. Matricol"].ToString();
                 }
                 else
                 {
@@ -316,6 +428,18 @@ namespace UniCatalog
                     else if (currentTable == 4)
                     {
                         query = "DELETE FROM discipline WHERE Cod = @id;";
+                    }
+                    else if (currentTable == 7)
+                    {
+                        query = "DELETE FROM student WHERE `Nr. Matricol` = @id;";
+                    }
+                    else if (currentTable == 8)
+                    {
+                        query = "DELETE FROM grupe WHERE Cod = @id;";
+                    }
+                    else if (currentTable == 10)
+                    {
+                        query = "UPDATE student SET Grupa = NULL WHERE `Nr. Matricol` = @id;";
                     }
                     else
                     {
@@ -355,13 +479,18 @@ namespace UniCatalog
             LoadDataFromDatabase(3);
             currentTable = 3;
             button2.Show();
+            comboBox4.Show();
             button1.Show();
             comboBox1.Show();
             textBox1.Show();
             comboBox2.Show();
             loadComboBox();
-            comboBox4.Hide();
             comboBox3.Hide();
+            comboBox4.Items.Clear();
+            for (int i = 0; i <= 9; i++)
+            {
+                comboBox4.Items.Add(i);
+            }
         }
 
         private void loadComboBox()
@@ -411,12 +540,13 @@ namespace UniCatalog
                     using (var connection = new MySqlConnection(connectionString))
                     {
                         connection.Open();
-                        string query = "INSERT INTO programedestudii (Ciclu, Programul,Durata) VALUES (@ciclu, @programul,@durata);";
+                        string query = "INSERT INTO programedestudii (Ciclu, Programul,Durata,Cod) VALUES (@ciclu, @programul,@durata,@cod);";
                         using (var command = new MySqlCommand(query, connection))
                         {
                             command.Parameters.AddWithValue("@ciclu", comboBox1.SelectedItem.ToString());
                             command.Parameters.AddWithValue("@programul", textBox1.Text);
                             command.Parameters.AddWithValue("@durata", comboBox2.SelectedIndex + 2);
+                            command.Parameters.AddWithValue("@cod", comboBox4.SelectedItem);
                             command.ExecuteNonQuery();
                         }
 
@@ -480,8 +610,126 @@ namespace UniCatalog
                     MessageBox.Show("Select Every Field", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
             }
+            else if (currentTable == 8)
+            {
+                String cod = 4.ToString();
+                String Ciclu = comboBox1.SelectedItem.ToString();
+                String Programul = comboBox3.SelectedItem.ToString();
+                cod = cod + String.Concat(Ciclu.Substring(0, 1)[0], 'F') + ProgramCheck(Programul) + comboBox2.SelectedIndex.ToString();
+                InsertRowIntoTableGrupe(cod);
+                LoadDataFromDatabase(currentTable);
+            }
+            else if (currentTable == 9)
+            {
+                try
+                {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+
+                        query = "UPDATE student SET Grupa = @grupa WHERE `Nr. Matricol` = @nr;";
+
+                        using (var command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@grupa", comboBox3.SelectedItem);
+                            command.Parameters.AddWithValue("@nr", comboBox1.SelectedItem);
+                            command.ExecuteNonQuery();
+                        }
+                        Console.WriteLine("Database updated successfully.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+            }
+            else if (currentTable == 11)
+            {
+                double rowCount = (double)(dataGridView1.RowCount - 1) / Convert.ToInt32(comboBox3.SelectedItem);
+                rowCount = (int)Math.Ceiling(rowCount);
+                int nr = 1;
+                try
+                {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        for (int i = 0; i < dataGridView1.RowCount; i++)
+                        {
+                            if (i % rowCount == 0 && i != 0)
+                                nr++;
+                            DataGridViewRow row = dataGridView1.Rows[i];
+                            string cellValue = row.Cells["Nr. Matricol"].Value?.ToString();
+                            query = "UPDATE student SET Grupa = @grupa WHERE `Nr. Matricol` = @nr ;";
+                            using (var command = new MySqlCommand(query, connection))
+                            {
+                                command.Parameters.AddWithValue("@grupa", comboBox1.SelectedItem + nr.ToString());
+                                command.Parameters.AddWithValue("@nr", cellValue);
+                                command.ExecuteNonQuery();
+                            }
+                            Console.WriteLine("Database updated successfully.");
+
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                comboBox1_SelectedIndexChanged(null, null);
+            }
 
 
+
+        }
+        private void InsertRowIntoTableGrupe(String Cod)
+        {
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    query = "INSERT INTO grupe (Cod) VALUES (@cod);";
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+
+                        command.Parameters.AddWithValue("@cod", Cod);
+                        command.ExecuteNonQuery();
+                    }
+
+                    Console.WriteLine("New row inserted into the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+        private int ProgramCheck(string Programul)
+        {
+            int nr = 0;
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    string query = "SELECT Cod FROM programedestudii WHERE Programul = @programul;";
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@programul", Programul);
+                        var codValue = command.ExecuteScalar();
+
+                        if (codValue != null)
+                        {
+                            nr = Convert.ToInt32(codValue);
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            return nr;
         }
 
         private void vizualizareToolStripMenuItem_Click(object sender, EventArgs e)
@@ -492,7 +740,7 @@ namespace UniCatalog
             LoadComboDiscipline();
             button1.Text = "Check";
             dataGridView1.Enabled = false;
-          
+
         }
 
         private void disciplineToolStripMenuItem_Click(object sender, EventArgs e)
@@ -541,7 +789,7 @@ namespace UniCatalog
 
         private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (currentTable == 4 || currentTable == 5)
+            if (currentTable == 4 || currentTable == 5 || currentTable == 8)
             {
                 comboBox3.Items.Clear();
                 try
@@ -574,42 +822,118 @@ namespace UniCatalog
                     Console.WriteLine("Error: " + ex.Message);
                 }
             }
+            else if (currentTable == 10 || currentTable == 11)
+            {
+                dataGridView1.Enabled = true;
+                dataTable = new DataTable();
+                try
+                {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        Console.WriteLine("Connected to the database.");
+
+                        query = $"SELECT * FROM student WHERE Grupa LIKE '{comboBox1.SelectedItem.ToString()}%' ORDER BY `Media Inscriere` DESC;";
+
+                        using (var command = new MySqlCommand(query, connection))
+                        using (var reader = command.ExecuteReader())
+                        {
+                            dataTable.Load(reader);
+                        }
+                        dataGridView1.DataSource = dataTable;
+                        Console.WriteLine("Disconnected from the database.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            }
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
         {
-            comboBox2.Items.Clear();
-            try
+            if (currentTable != 8 && currentTable != 10)
             {
-                using (var connection = new MySqlConnection(connectionString))
+
+                comboBox2.Items.Clear();
+                try
                 {
-                    connection.Open();
-                    Console.WriteLine("Connected to the database.");
-
-                    string query = "SELECT Durata FROM programedestudii WHERE Ciclu = @ciclu AND Programul = @program;";
-
-                    using (var command = new MySqlCommand(query, connection))
+                    using (var connection = new MySqlConnection(connectionString))
                     {
-                        command.Parameters.AddWithValue("@ciclu", comboBox1.SelectedItem.ToString());
-                        command.Parameters.AddWithValue("@program", comboBox3.SelectedItem.ToString());
-                        using (var reader = command.ExecuteReader())
+                        connection.Open();
+                        Console.WriteLine("Connected to the database.");
+
+                        string query = "SELECT Durata FROM programedestudii WHERE Ciclu = @ciclu AND Programul = @program;";
+
+                        using (var command = new MySqlCommand(query, connection))
                         {
-                            while (reader.Read())
+                            command.Parameters.AddWithValue("@ciclu", comboBox1.SelectedItem.ToString());
+                            command.Parameters.AddWithValue("@program", comboBox3.SelectedItem.ToString());
+                            using (var reader = command.ExecuteReader())
                             {
-                                int an = reader.GetInt16("Durata");
-                                for (int i = 1; i <= an; i++)
-                                    comboBox2.Items.Add(i);
+                                while (reader.Read())
+                                {
+                                    int an = reader.GetInt16("Durata");
+                                    for (int i = 1; i <= an; i++)
+                                        comboBox2.Items.Add(i);
+                                }
                             }
                         }
-                    }
 
-                    Console.WriteLine("Disconnected from the database.");
+                        Console.WriteLine("Disconnected from the database.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+
+            }
+            else if (currentTable == 10)
+            {
+                dataGridView1.Enabled = true;
+                dataTable = new DataTable();
+                try
+                {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        Console.WriteLine("Connected to the database.");
+
+                        query = "SELECT * FROM student WHERE Grupa = @grupa;";
+
+                        using (var command = new MySqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@grupa", comboBox1.SelectedItem.ToString() + comboBox3.SelectedItem.ToString());
+                            using (var reader = command.ExecuteReader())
+                            {
+                                dataTable.Load(reader);
+                            }
+                            dataGridView1.DataSource = dataTable;
+                            Console.WriteLine("Disconnected from the database.");
+                        }
+
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+
+
+            }
+            else
+            {
+                for (int i = 0; i <= 9; i++)
+                {
+                    comboBox2.Items.Add(i);
                 }
             }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Error: " + ex.Message);
-            }
+
+
         }
 
         private void textboxload()
@@ -729,5 +1053,165 @@ namespace UniCatalog
 
         }
 
+        private void studentiToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            currentTable = 7;
+            LoadDataFromDatabase(7);
+            button2.Show();
+        }
+
+        private void creareGrupaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            currentTable = 8;
+            LoadDataFromDatabase(8);
+            comboBox1.Show();
+            comboBox2.Show();
+            comboBox3.Show();
+            button2.Show();
+            button1.Show();
+            LoadComboDiscipline();
+        }
+
+        private void asociereGrupaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadDataFromDatabase(7);
+            currentTable = 9;
+            hidestudii();
+            button2.Hide();
+            comboBox1.Show();
+            comboBox3.Show();
+            button1.Show();
+            button1.Text = "Asociaza";
+            LoadStudenti();
+            LoadGrupe();
+        }
+        private void LoadGrupe()
+        {
+            comboBox3.Items.Clear();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+
+                    string query = "SELECT Cod FROM grupe";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string cod = reader.GetString("Cod");
+                                comboBox3.Items.Add(cod);
+                            }
+                        }
+                    }
+
+                    Console.WriteLine("Disconnected from the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+        }
+        private void LoadStudenti()
+        {
+            comboBox1.Items.Clear();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+
+                    string query = "SELECT `Nr. Matricol` FROM student WHERE Grupa IS NULL ORDER BY `Media Inscriere` DESC;";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string nr = reader.GetString("Nr. Matricol");
+                                comboBox1.Items.Add(nr);
+                            }
+                        }
+                    }
+
+                    Console.WriteLine("Disconnected from the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+
+        private void adaugagrupa()
+        {
+            comboBox1.Items.Clear();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+
+                    string query = "SELECT Cod FROM grupe";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    {
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string cod = reader.GetString("Cod");
+                                comboBox1.Items.Add(cod);
+                            }
+                        }
+                    }
+                    Console.WriteLine("Disconnected from the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+        }
+        private void vizualizareGrupaToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            currentTable = 10;
+            hidestudii();
+            comboBox1.Show();
+            comboBox3.Show();
+            button2.Show();
+            adaugagrupa();
+            comboBox3.Items.Clear();
+            for (int i = 1; i <= 5; i++)
+            {
+                comboBox3.Items.Add(i);
+            }
+        }
+
+        private void divizareAutomataToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            LoadDataFromDatabase(7);
+            currentTable = 11;
+            hidestudii();
+            comboBox1.Show();
+            comboBox3.Show();
+            button1.Show();
+            button1.Text = "Imparte";
+            adaugagrupa();
+            comboBox3.Items.Clear();
+            for (int i = 1; i <= 4; i++)
+            {
+                comboBox3.Items.Add(i);
+            }
+        }
     }
 }

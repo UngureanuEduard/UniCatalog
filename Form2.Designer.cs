@@ -39,6 +39,12 @@
             planuriDeInvatamantToolStripMenuItem = new ToolStripMenuItem();
             disciplineToolStripMenuItem = new ToolStripMenuItem();
             vizualizareToolStripMenuItem = new ToolStripMenuItem();
+            studentiToolStripMenuItem = new ToolStripMenuItem();
+            grupeToolStripMenuItem = new ToolStripMenuItem();
+            asociereGrupaToolStripMenuItem = new ToolStripMenuItem();
+            creareGrupaToolStripMenuItem = new ToolStripMenuItem();
+            vizualizareGrupaToolStripMenuItem = new ToolStripMenuItem();
+            divizareAutomataToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             dataGridView1 = new DataGridView();
             button2 = new Button();
@@ -82,7 +88,7 @@
             // 
             // optiuniToolStripMenuItem
             // 
-            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem, programeDeStudiiToolStripMenuItem, planuriDeInvatamantToolStripMenuItem });
+            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem, programeDeStudiiToolStripMenuItem, planuriDeInvatamantToolStripMenuItem, studentiToolStripMenuItem, grupeToolStripMenuItem });
             optiuniToolStripMenuItem.Name = "optiuniToolStripMenuItem";
             optiuniToolStripMenuItem.Size = new Size(75, 24);
             optiuniToolStripMenuItem.Text = "Options";
@@ -128,6 +134,48 @@
             vizualizareToolStripMenuItem.Size = new Size(164, 26);
             vizualizareToolStripMenuItem.Text = "Vizualizare";
             vizualizareToolStripMenuItem.Click += vizualizareToolStripMenuItem_Click;
+            // 
+            // studentiToolStripMenuItem
+            // 
+            studentiToolStripMenuItem.Name = "studentiToolStripMenuItem";
+            studentiToolStripMenuItem.Size = new Size(236, 26);
+            studentiToolStripMenuItem.Text = "Studenti";
+            studentiToolStripMenuItem.Click += studentiToolStripMenuItem_Click;
+            // 
+            // grupeToolStripMenuItem
+            // 
+            grupeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { asociereGrupaToolStripMenuItem, creareGrupaToolStripMenuItem, vizualizareGrupaToolStripMenuItem, divizareAutomataToolStripMenuItem });
+            grupeToolStripMenuItem.Name = "grupeToolStripMenuItem";
+            grupeToolStripMenuItem.Size = new Size(236, 26);
+            grupeToolStripMenuItem.Text = "Grupe";
+            // 
+            // asociereGrupaToolStripMenuItem
+            // 
+            asociereGrupaToolStripMenuItem.Name = "asociereGrupaToolStripMenuItem";
+            asociereGrupaToolStripMenuItem.Size = new Size(224, 26);
+            asociereGrupaToolStripMenuItem.Text = "Asociere Grupa";
+            asociereGrupaToolStripMenuItem.Click += asociereGrupaToolStripMenuItem_Click;
+            // 
+            // creareGrupaToolStripMenuItem
+            // 
+            creareGrupaToolStripMenuItem.Name = "creareGrupaToolStripMenuItem";
+            creareGrupaToolStripMenuItem.Size = new Size(224, 26);
+            creareGrupaToolStripMenuItem.Text = "Creare Grupa";
+            creareGrupaToolStripMenuItem.Click += creareGrupaToolStripMenuItem_Click;
+            // 
+            // vizualizareGrupaToolStripMenuItem
+            // 
+            vizualizareGrupaToolStripMenuItem.Name = "vizualizareGrupaToolStripMenuItem";
+            vizualizareGrupaToolStripMenuItem.Size = new Size(224, 26);
+            vizualizareGrupaToolStripMenuItem.Text = "Vizualizare Grupa";
+            vizualizareGrupaToolStripMenuItem.Click += vizualizareGrupaToolStripMenuItem_Click;
+            // 
+            // divizareAutomataToolStripMenuItem
+            // 
+            divizareAutomataToolStripMenuItem.Name = "divizareAutomataToolStripMenuItem";
+            divizareAutomataToolStripMenuItem.Size = new Size(224, 26);
+            divizareAutomataToolStripMenuItem.Text = "DivizareAutomata";
+            divizareAutomataToolStripMenuItem.Click += divizareAutomataToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -304,5 +352,11 @@
         private TextBox textBox3;
         private TextBox textBox4;
         private Button button3;
+        private ToolStripMenuItem studentiToolStripMenuItem;
+        private ToolStripMenuItem grupeToolStripMenuItem;
+        private ToolStripMenuItem asociereGrupaToolStripMenuItem;
+        private ToolStripMenuItem creareGrupaToolStripMenuItem;
+        private ToolStripMenuItem vizualizareGrupaToolStripMenuItem;
+        private ToolStripMenuItem divizareAutomataToolStripMenuItem;
     }
 }
