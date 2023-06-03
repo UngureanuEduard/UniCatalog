@@ -34,8 +34,6 @@
             textBox2 = new TextBox();
             button1 = new Button();
             panel1 = new Panel();
-            label3 = new Label();
-            comboBox1 = new ComboBox();
             panel1.SuspendLayout();
             SuspendLayout();
             // 
@@ -73,7 +71,7 @@
             // 
             // button1
             // 
-            button1.Location = new Point(112, 176);
+            button1.Location = new Point(112, 137);
             button1.Name = "button1";
             button1.Size = new Size(94, 29);
             button1.TabIndex = 4;
@@ -83,8 +81,6 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(label3);
-            panel1.Controls.Add(comboBox1);
             panel1.Controls.Add(button1);
             panel1.Controls.Add(textBox2);
             panel1.Controls.Add(textBox1);
@@ -93,32 +89,14 @@
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(259, 231);
+            panel1.Size = new Size(259, 196);
             panel1.TabIndex = 11;
-            // 
-            // label3
-            // 
-            label3.AutoSize = true;
-            label3.Location = new Point(10, 136);
-            label3.Name = "label3";
-            label3.Size = new Size(69, 20);
-            label3.TabIndex = 6;
-            label3.Text = "UserType";
-            // 
-            // comboBox1
-            // 
-            comboBox1.DropDownStyle = ComboBoxStyle.DropDownList;
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(85, 133);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(151, 28);
-            comboBox1.TabIndex = 5;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(259, 231);
+            ClientSize = new Size(259, 196);
             Controls.Add(panel1);
             Name = "Form1";
             Text = "Login";
@@ -136,7 +114,5 @@
         private TextBox textBox2;
         private Button button1;
         private Panel panel1;
-        private ComboBox comboBox1;
-        private Label label3;
     }
 }

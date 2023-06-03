@@ -54,10 +54,13 @@ namespace UniCatalog
             comboBox2.Hide();
             comboBox4.Hide();
             comboBox3.Hide();
-            textBox2.Hide();
-            textBox3.Hide();
-            textBox4.Hide();
-            button3.Hide();
+            if (textBox2.Visible == true)
+            {
+                textBox2.Hide();
+                textBox3.Hide();
+                textBox4.Hide();
+                button3.Hide();
+            }
         }
 
         private void LoadDataFromDatabase(int operatie)
@@ -483,15 +486,18 @@ namespace UniCatalog
 
         private void vizualizareToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            DisciplineCheck();
             currentTable = 5;
             SetControlsVisibility(true, true, true, true, false);
             LoadComboDiscipline();
             button1.Text = "Check";
             dataGridView1.Enabled = false;
+          
         }
 
         private void disciplineToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            DisciplineCheck();
             currentTable = 4;
             SetControlsVisibility(true, true, true, true, true);
             LoadDataFromDatabase(currentTable);
@@ -702,6 +708,25 @@ namespace UniCatalog
             button1.Visible = true;
             button2.Visible = button2Visible;
             dataGridView1.Enabled = false;
+        }
+        private void DisciplineCheck()
+        {
+            if (textBox2.Visible == true)
+            {
+                textBox2.Hide();
+                textBox3.Hide();
+                textBox4.Hide();
+                button3.Hide();
+            }
+            if (comboBox1.Enabled == false)
+            {
+                comboBox1.Enabled = true;
+                comboBox2.Enabled = true;
+                comboBox2.Enabled = true;
+                comboBox3.Enabled = true;
+                comboBox4.Enabled = true;
+            }
+
         }
 
     }

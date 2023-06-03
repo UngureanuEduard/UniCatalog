@@ -15,8 +15,6 @@ namespace UniCatalog
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            label3.Hide();
-            comboBox1.Hide();
             textBox2.PasswordChar = '*';
             string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
 
