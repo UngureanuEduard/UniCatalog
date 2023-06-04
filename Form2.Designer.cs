@@ -152,28 +152,28 @@
             // asociereGrupaToolStripMenuItem
             // 
             asociereGrupaToolStripMenuItem.Name = "asociereGrupaToolStripMenuItem";
-            asociereGrupaToolStripMenuItem.Size = new Size(224, 26);
+            asociereGrupaToolStripMenuItem.Size = new Size(212, 26);
             asociereGrupaToolStripMenuItem.Text = "Asociere Grupa";
             asociereGrupaToolStripMenuItem.Click += asociereGrupaToolStripMenuItem_Click;
             // 
             // creareGrupaToolStripMenuItem
             // 
             creareGrupaToolStripMenuItem.Name = "creareGrupaToolStripMenuItem";
-            creareGrupaToolStripMenuItem.Size = new Size(224, 26);
+            creareGrupaToolStripMenuItem.Size = new Size(212, 26);
             creareGrupaToolStripMenuItem.Text = "Creare Grupa";
             creareGrupaToolStripMenuItem.Click += creareGrupaToolStripMenuItem_Click;
             // 
             // vizualizareGrupaToolStripMenuItem
             // 
             vizualizareGrupaToolStripMenuItem.Name = "vizualizareGrupaToolStripMenuItem";
-            vizualizareGrupaToolStripMenuItem.Size = new Size(224, 26);
+            vizualizareGrupaToolStripMenuItem.Size = new Size(212, 26);
             vizualizareGrupaToolStripMenuItem.Text = "Vizualizare Grupa";
             vizualizareGrupaToolStripMenuItem.Click += vizualizareGrupaToolStripMenuItem_Click;
             // 
             // divizareAutomataToolStripMenuItem
             // 
             divizareAutomataToolStripMenuItem.Name = "divizareAutomataToolStripMenuItem";
-            divizareAutomataToolStripMenuItem.Size = new Size(224, 26);
+            divizareAutomataToolStripMenuItem.Size = new Size(212, 26);
             divizareAutomataToolStripMenuItem.Text = "DivizareAutomata";
             divizareAutomataToolStripMenuItem.Click += divizareAutomataToolStripMenuItem_Click;
             // 

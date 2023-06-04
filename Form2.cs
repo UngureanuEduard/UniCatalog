@@ -32,7 +32,7 @@ namespace UniCatalog
             comboBox4.Hide();
             button2.Hide();
             hidestudii();
-            comboBox4.Items.AddRange(new string[] { "A", "B" });
+           
             foreach (ToolStripItem item in optiuniToolStripMenuItem.DropDownItems)
             {
                 item.Visible = false;
@@ -119,7 +119,7 @@ namespace UniCatalog
                         string? password = row["Password"].ToString();
                         int userType = Convert.ToInt32(row["User Type"]);
                         string? materie = row["MaterieTitular"].ToString();
-                        UpdateRowInDatabase(id, username, password, userType,materie);
+                        UpdateRowInDatabase(id, username, password, userType, materie);
                     }
                     else if (currentTable == 7)
                     {
@@ -139,7 +139,7 @@ namespace UniCatalog
                         // Get the modified values from the DataGridView
                         string ciclu = row["Ciclu"].ToString();
                         string acronim = row["Acronim"].ToString();
-                        UpdateRowInDatabase(ciclu, acronim, acronim, 0 , null);
+                        UpdateRowInDatabase(ciclu, acronim, acronim, 0, null);
                     }
                 }
             }
@@ -149,7 +149,7 @@ namespace UniCatalog
             }
         }
 
-        private void UpdateRowInDatabase(string id, string username, string password, int userType,string materie)
+        private void UpdateRowInDatabase(string id, string username, string password, int userType, string materie)
         {
 
             try
@@ -375,32 +375,27 @@ namespace UniCatalog
                 DataRowView selectedRowView = (DataRowView)selectedRow.DataBoundItem;
                 DataRow selectedDataRow = selectedRowView.Row;
                 string id;
-                if (currentTable == 3)
+                switch (currentTable)
                 {
-                    id = selectedDataRow["Programul"].ToString();
+                    case 3:
+                        id = selectedDataRow["Programul"].ToString();
+                        break;
+                    case 4:
+                        id = selectedDataRow["Cod"].ToString();
+                        break;
+                    case 7:
+                        id = selectedDataRow["Nr. Matricol"].ToString();
+                        break;
+                    case 8:
+                        id = selectedDataRow["Cod"].ToString();
+                        break;
+                    case 10:
+                        id = selectedDataRow["Nr. Matricol"].ToString();
+                        break;
+                    default:
+                        id = currentTable == 1 ? selectedDataRow["ID"].ToString() : selectedDataRow["Ciclu"].ToString();
+                        break;
                 }
-                else if (currentTable == 4)
-                {
-                    id = selectedDataRow["Cod"].ToString();
-                }
-                else if (currentTable == 7)
-                {
-                    id = selectedDataRow["Nr. Matricol"].ToString();
-                }
-                else if (currentTable == 8)
-                {
-                    id = selectedDataRow["Cod"].ToString();
-                }
-                else if (currentTable == 10)
-                {
-                    id = selectedDataRow["Nr. Matricol"].ToString();
-                }
-                else
-                {
-                    id = currentTable == 1 ? selectedDataRow["ID"].ToString() : selectedDataRow["Ciclu"].ToString();
-                }
-
-
                 // Delete the row from the database
                 DeleteRowFromDatabase(id);
 
@@ -421,29 +416,26 @@ namespace UniCatalog
                 {
                     connection.Open();
 
-                    if (currentTable == 3)
+                    switch (currentTable)
                     {
-                        query = "DELETE FROM programedestudii WHERE Programul = @id;";
-                    }
-                    else if (currentTable == 4)
-                    {
-                        query = "DELETE FROM discipline WHERE Cod = @id;";
-                    }
-                    else if (currentTable == 7)
-                    {
-                        query = "DELETE FROM student WHERE `Nr. Matricol` = @id;";
-                    }
-                    else if (currentTable == 8)
-                    {
-                        query = "DELETE FROM grupe WHERE Cod = @id;";
-                    }
-                    else if (currentTable == 10)
-                    {
-                        query = "UPDATE student SET Grupa = NULL WHERE `Nr. Matricol` = @id;";
-                    }
-                    else
-                    {
-                        query = currentTable == 1 ? "DELETE FROM conturi WHERE ID = @id;" : "DELETE FROM ciclurideinvatamant  WHERE Ciclu = @id;";
+                        case 3:
+                            query = "DELETE FROM programedestudii WHERE Programul = @id;";
+                            break;
+                        case 4:
+                            query = "DELETE FROM discipline WHERE Cod = @id;";
+                            break;
+                        case 7:
+                            query = "DELETE FROM student WHERE `Nr. Matricol` = @id;";
+                            break;
+                        case 8:
+                            query = "DELETE FROM grupe WHERE Cod = @id;";
+                            break;
+                        case 10:
+                            query = "UPDATE student SET Grupa = NULL WHERE `Nr. Matricol` = @id;";
+                            break;
+                        default:
+                            query = currentTable == 1 ? "DELETE FROM conturi WHERE ID = @id;" : "DELETE FROM ciclurideinvatamant  WHERE Ciclu = @id;";
+                            break;
                     }
                     using (var command = new MySqlCommand(query, connection))
                     {
@@ -496,6 +488,7 @@ namespace UniCatalog
         private void loadComboBox()
         {
             comboBox1.Items.Clear();
+            comboBox2.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -677,9 +670,6 @@ namespace UniCatalog
                 }
                 comboBox1_SelectedIndexChanged(null, null);
             }
-
-
-
         }
         private void InsertRowIntoTableGrupe(String Cod)
         {
@@ -734,13 +724,13 @@ namespace UniCatalog
 
         private void vizualizareToolStripMenuItem_Click(object sender, EventArgs e)
         {
+
             DisciplineCheck();
             currentTable = 5;
             SetControlsVisibility(true, true, true, true, false);
             LoadComboDiscipline();
             button1.Text = "Check";
             dataGridView1.Enabled = false;
-
         }
 
         private void disciplineToolStripMenuItem_Click(object sender, EventArgs e)
@@ -758,7 +748,8 @@ namespace UniCatalog
             comboBox1.Items.Clear();
             comboBox2.Items.Clear();
             comboBox3.Items.Clear();
-
+            comboBox4.Items.Clear();
+            comboBox4.Items.AddRange(new string[] { "A", "B" });
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -932,8 +923,6 @@ namespace UniCatalog
                     comboBox2.Items.Add(i);
                 }
             }
-
-
         }
 
         private void textboxload()
@@ -1055,6 +1044,9 @@ namespace UniCatalog
 
         private void studentiToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SetControlsVisibility(false, false, false, false, false);
+            comboBox2.Hide();
+            button1.Hide();
             currentTable = 7;
             LoadDataFromDatabase(7);
             button2.Show();
@@ -1062,12 +1054,11 @@ namespace UniCatalog
 
         private void creareGrupaToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SetControlsVisibility(false, true, true, false, true);
+            button1.Text = "Creare";
             currentTable = 8;
             LoadDataFromDatabase(8);
-            comboBox1.Show();
-            comboBox2.Show();
             comboBox3.Show();
-            button2.Show();
             button1.Show();
             LoadComboDiscipline();
         }
@@ -1087,7 +1078,6 @@ namespace UniCatalog
         }
         private void LoadGrupe()
         {
-            comboBox3.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1101,6 +1091,7 @@ namespace UniCatalog
                     {
                         using (var reader = command.ExecuteReader())
                         {
+                            comboBox3.Items.Clear();
                             while (reader.Read())
                             {
                                 string cod = reader.GetString("Cod");
@@ -1116,11 +1107,10 @@ namespace UniCatalog
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
-
         }
+
         private void LoadStudenti()
         {
-            comboBox1.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1134,6 +1124,7 @@ namespace UniCatalog
                     {
                         using (var reader = command.ExecuteReader())
                         {
+                            comboBox1.Items.Clear();
                             while (reader.Read())
                             {
                                 string nr = reader.GetString("Nr. Matricol");
@@ -1151,9 +1142,8 @@ namespace UniCatalog
             }
         }
 
-        private void adaugagrupa()
+        private void AdaugaGrupa(ComboBox comboBox)
         {
-            comboBox1.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1167,13 +1157,15 @@ namespace UniCatalog
                     {
                         using (var reader = command.ExecuteReader())
                         {
+                            comboBox.Items.Clear();
                             while (reader.Read())
                             {
                                 string cod = reader.GetString("Cod");
-                                comboBox1.Items.Add(cod);
+                                comboBox.Items.Add(cod);
                             }
                         }
                     }
+
                     Console.WriteLine("Disconnected from the database.");
                 }
             }
@@ -1182,6 +1174,7 @@ namespace UniCatalog
                 Console.WriteLine("Error: " + ex.Message);
             }
         }
+
         private void vizualizareGrupaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             currentTable = 10;
@@ -1189,9 +1182,9 @@ namespace UniCatalog
             comboBox1.Show();
             comboBox3.Show();
             button2.Show();
-            adaugagrupa();
+            AdaugaGrupa(comboBox1);
             comboBox3.Items.Clear();
-            for (int i = 1; i <= 5; i++)
+            for (int i = 1; i <= 4; i++)
             {
                 comboBox3.Items.Add(i);
             }
@@ -1206,7 +1199,7 @@ namespace UniCatalog
             comboBox3.Show();
             button1.Show();
             button1.Text = "Imparte";
-            adaugagrupa();
+            AdaugaGrupa(comboBox1);
             comboBox3.Items.Clear();
             for (int i = 1; i <= 4; i++)
             {
