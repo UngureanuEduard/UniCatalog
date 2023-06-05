@@ -45,6 +45,7 @@
             creareGrupaToolStripMenuItem = new ToolStripMenuItem();
             vizualizareGrupaToolStripMenuItem = new ToolStripMenuItem();
             divizareAutomataToolStripMenuItem = new ToolStripMenuItem();
+            noteToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             dataGridView1 = new DataGridView();
             button2 = new Button();
@@ -58,6 +59,8 @@
             textBox3 = new TextBox();
             textBox4 = new TextBox();
             button3 = new Button();
+            button4 = new Button();
+            button5 = new Button();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -82,13 +85,14 @@
             menuStrip1.Items.AddRange(new ToolStripItem[] { optiuniToolStripMenuItem, helpToolStripMenuItem });
             menuStrip1.Location = new Point(0, 0);
             menuStrip1.Name = "menuStrip1";
-            menuStrip1.Size = new Size(800, 28);
+            menuStrip1.Padding = new Padding(6, 3, 0, 3);
+            menuStrip1.Size = new Size(800, 30);
             menuStrip1.TabIndex = 2;
             menuStrip1.Text = "menuStrip1";
             // 
             // optiuniToolStripMenuItem
             // 
-            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem, programeDeStudiiToolStripMenuItem, planuriDeInvatamantToolStripMenuItem, studentiToolStripMenuItem, grupeToolStripMenuItem });
+            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem, programeDeStudiiToolStripMenuItem, planuriDeInvatamantToolStripMenuItem, studentiToolStripMenuItem, grupeToolStripMenuItem, noteToolStripMenuItem });
             optiuniToolStripMenuItem.Name = "optiuniToolStripMenuItem";
             optiuniToolStripMenuItem.Size = new Size(75, 24);
             optiuniToolStripMenuItem.Text = "Options";
@@ -152,30 +156,37 @@
             // asociereGrupaToolStripMenuItem
             // 
             asociereGrupaToolStripMenuItem.Name = "asociereGrupaToolStripMenuItem";
-            asociereGrupaToolStripMenuItem.Size = new Size(224, 26);
+            asociereGrupaToolStripMenuItem.Size = new Size(212, 26);
             asociereGrupaToolStripMenuItem.Text = "Asociere Grupa";
             asociereGrupaToolStripMenuItem.Click += asociereGrupaToolStripMenuItem_Click;
             // 
             // creareGrupaToolStripMenuItem
             // 
             creareGrupaToolStripMenuItem.Name = "creareGrupaToolStripMenuItem";
-            creareGrupaToolStripMenuItem.Size = new Size(224, 26);
+            creareGrupaToolStripMenuItem.Size = new Size(212, 26);
             creareGrupaToolStripMenuItem.Text = "Creare Grupa";
             creareGrupaToolStripMenuItem.Click += creareGrupaToolStripMenuItem_Click;
             // 
             // vizualizareGrupaToolStripMenuItem
             // 
             vizualizareGrupaToolStripMenuItem.Name = "vizualizareGrupaToolStripMenuItem";
-            vizualizareGrupaToolStripMenuItem.Size = new Size(224, 26);
+            vizualizareGrupaToolStripMenuItem.Size = new Size(212, 26);
             vizualizareGrupaToolStripMenuItem.Text = "Vizualizare Grupa";
             vizualizareGrupaToolStripMenuItem.Click += vizualizareGrupaToolStripMenuItem_Click;
             // 
             // divizareAutomataToolStripMenuItem
             // 
             divizareAutomataToolStripMenuItem.Name = "divizareAutomataToolStripMenuItem";
-            divizareAutomataToolStripMenuItem.Size = new Size(224, 26);
+            divizareAutomataToolStripMenuItem.Size = new Size(212, 26);
             divizareAutomataToolStripMenuItem.Text = "DivizareAutomata";
             divizareAutomataToolStripMenuItem.Click += divizareAutomataToolStripMenuItem_Click;
+            // 
+            // noteToolStripMenuItem
+            // 
+            noteToolStripMenuItem.Name = "noteToolStripMenuItem";
+            noteToolStripMenuItem.Size = new Size(236, 26);
+            noteToolStripMenuItem.Text = "Note";
+            noteToolStripMenuItem.Click += noteToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -194,6 +205,7 @@
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.Size = new Size(601, 416);
             dataGridView1.TabIndex = 3;
+            dataGridView1.CellClick += dataGridView1_CellClick_1;
             dataGridView1.CellEndEdit += dataGridView1_CellEndEdit;
             dataGridView1.UserAddedRow += dataGridView1_UserAddedRow;
             // 
@@ -262,6 +274,7 @@
             comboBox4.Name = "comboBox4";
             comboBox4.Size = new Size(151, 28);
             comboBox4.TabIndex = 11;
+            comboBox4.SelectedIndexChanged += comboBox4_SelectedIndexChanged;
             // 
             // textBox2
             // 
@@ -289,7 +302,7 @@
             // 
             // button3
             // 
-            button3.Location = new Point(656, 318);
+            button3.Location = new Point(656, 317);
             button3.Name = "button3";
             button3.Size = new Size(94, 29);
             button3.TabIndex = 15;
@@ -297,11 +310,35 @@
             button3.UseVisualStyleBackColor = true;
             button3.Click += button3_Click;
             // 
+            // button4
+            // 
+            button4.Location = new Point(608, 353);
+            button4.Margin = new Padding(3, 4, 3, 4);
+            button4.Name = "button4";
+            button4.Size = new Size(94, 31);
+            button4.TabIndex = 16;
+            button4.Text = "Adaugare";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(709, 353);
+            button5.Margin = new Padding(3, 4, 3, 4);
+            button5.Name = "button5";
+            button5.Size = new Size(86, 31);
+            button5.TabIndex = 17;
+            button5.Text = "Stergere";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(800, 451);
+            Controls.Add(button5);
+            Controls.Add(button4);
             Controls.Add(button3);
             Controls.Add(textBox4);
             Controls.Add(textBox3);
@@ -358,5 +395,8 @@
         private ToolStripMenuItem creareGrupaToolStripMenuItem;
         private ToolStripMenuItem vizualizareGrupaToolStripMenuItem;
         private ToolStripMenuItem divizareAutomataToolStripMenuItem;
+        private ToolStripMenuItem noteToolStripMenuItem;
+        private Button button4;
+        private Button button5;
     }
 }

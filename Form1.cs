@@ -1,4 +1,8 @@
 using MySql.Data.MySqlClient;
+using System.Data;
+using System.Net;
+using System.Windows.Forms;
+using static System.ComponentModel.Design.ObjectSelectorEditor;
 
 namespace UniCatalog
 {
@@ -6,7 +10,8 @@ namespace UniCatalog
     {
         private Form? currentForm;
         private List<Account> accountList;
-
+        private string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
+        public string ins,dis;
         public Form1()
         {
             accountList = new List<Account>();
@@ -16,8 +21,6 @@ namespace UniCatalog
         private void Form1_Load(object sender, EventArgs e)
         {
             textBox2.PasswordChar = '*';
-            string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
-
             try
             {
                 using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -56,15 +59,19 @@ namespace UniCatalog
         {
             string username = textBox1.Text;
             string password = textBox2.Text;
-
+            ins = "SELECT MaterieTitular FROM `conturi` WHERE user = '" + username + "';";
             int found = 0;
-
+            DataTable dt = GetDataFromDatabase(ins);
+            foreach (DataRow row in dt.Rows)
+            {
+                dis = row["MaterieTitular"].ToString();
+            }
             foreach (Account account in accountList)
             {
                 if (account.User == username && account.Password == password)
                 {
                     found = account.UserType;
-                    Form2 form2 = new Form2();
+                    Form2 form2 = new Form2(dis);
                     form2.Number = found;
                     form2.Show();
                     this.Hide();
@@ -76,5 +83,29 @@ namespace UniCatalog
                 MessageBox.Show("Invalid username or password.");
             }
         }
+        private DataTable GetDataFromDatabase(string query)
+        {
+            DataTable data = new DataTable();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+                    using (var command = new MySqlCommand(query, connection))
+                    using (var reader = command.ExecuteReader())
+                    {
+                        data.Load(reader);
+                    }
+                    Console.WriteLine("Disconnected from the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            return data;
+        }
+
     }
 }
