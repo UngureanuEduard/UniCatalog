@@ -23,7 +23,7 @@ namespace UniCatalog
             textBox2.PasswordChar = '*';
             try
             {
-                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                using (MySqlConnection connection = new(connectionString))
                 {
                     connection.Open();
                     Console.WriteLine("Connected to the database.");
@@ -85,7 +85,7 @@ namespace UniCatalog
         }
         private DataTable GetDataFromDatabase(string query)
         {
-            DataTable data = new DataTable();
+            DataTable data = new();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))

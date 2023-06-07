@@ -1,5 +1,6 @@
 ﻿using MySql.Data.MySqlClient;
 using System.Data;
+using System.Diagnostics;
 
 namespace UniCatalog
 {
@@ -11,8 +12,8 @@ namespace UniCatalog
         private string? query;
         private int currentTable;
         List<string> subjects = new List<string>();
-        public string disciplina, matricol;
-        public DataTable grades;
+        public string? disciplina, matricol;
+        public DataTable? grades;
 
         public Form2(string receivedData)
         {
@@ -39,6 +40,14 @@ namespace UniCatalog
             if (Number % 10 == 1)
             {
                 utilizatoriToolStripMenuItem.Visible = true;
+                cicluDeInvatamantToolStripMenuItem.Visible = true;
+                programeDeStudiiToolStripMenuItem.Visible = true;
+                planuriDeInvatamantToolStripMenuItem.Visible = true;
+                studentiToolStripMenuItem.Visible = true;
+                grupeToolStripMenuItem.Visible = true;
+            }
+            if ((Number % 100) / 10 >= 1)
+            {
                 cicluDeInvatamantToolStripMenuItem.Visible = true;
                 programeDeStudiiToolStripMenuItem.Visible = true;
                 planuriDeInvatamantToolStripMenuItem.Visible = true;
@@ -135,7 +144,7 @@ namespace UniCatalog
             }
         }
 
-        private void UpdateRowInDatabase(string id, string username, string password, int userType, string materie)
+        private void UpdateRowInDatabase(string id, string username, string password, int userType, string? materie)
         {
 
             try
@@ -558,10 +567,10 @@ namespace UniCatalog
                 if (comboBox1.SelectedItem != null && comboBox2.SelectedItem != null && comboBox3.SelectedItem != null && comboBox4.SelectedItem != null)
                 {
                     String Ciclu = comboBox1.SelectedItem.ToString();
-                    String Programul = comboBox3.SelectedItem.ToString();
+                    String Programul = (comboBox3.SelectedIndex + 1).ToString();
                     int An = int.Parse(comboBox2.SelectedItem.ToString());
                     String Semestru = comboBox4.SelectedItem.ToString();
-                    String cod = String.Concat(String.Concat(Ciclu.Substring(0, 1)[0], Programul.Substring(0, 2)) + An, Semestru);
+                    String cod = String.Concat(String.Concat(Ciclu.Substring(0, 1)[0], Programul) + An, Semestru);
                     query = $"SELECT * FROM discipline WHERE Cod like '{cod}%';";
                     LoadDataFromDatabase(5);
                     dataGridView1.Enabled = false;
@@ -606,37 +615,126 @@ namespace UniCatalog
             }
             else if (currentTable == 11)
             {
-                double rowCount = (double)(dataGridView1.RowCount - 1) / Convert.ToInt32(comboBox3.SelectedItem);
-                rowCount = (int)Math.Ceiling(rowCount);
-                int nr = 1;
+                if (comboBox3.SelectedIndex != -1)
+                {
+                    double rowCount = (double)(dataGridView1.RowCount - 1) / Convert.ToInt32(comboBox3.SelectedItem);
+                    rowCount = (int)Math.Ceiling(rowCount);
+                    int nr = 1;
+                    try
+                    {
+                        using (var connection = new MySqlConnection(connectionString))
+                        {
+                            connection.Open();
+                            for (int i = 0; i < dataGridView1.RowCount; i++)
+                            {
+                                if (i % rowCount == 0 && i != 0)
+                                    nr++;
+                                DataGridViewRow row = dataGridView1.Rows[i];
+                                string cellValue = row.Cells["Nr. Matricol"].Value?.ToString();
+                                query = "UPDATE student SET Grupa = @grupa WHERE `Nr. Matricol` = @nr ;";
+                                using (var command = new MySqlCommand(query, connection))
+                                {
+                                    command.Parameters.AddWithValue("@grupa", comboBox1.SelectedItem + nr.ToString());
+                                    command.Parameters.AddWithValue("@nr", cellValue);
+                                    command.ExecuteNonQuery();
+                                }
+                                Console.WriteLine("Database updated successfully.");
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
+                    comboBox1_SelectedIndexChanged(null, null);
+
+
+                    AsociereMaterie();
+                }
+                else {
+                    MessageBox.Show("Selecteaza in cate vrei sa imparti ");
+                }
+                
+            }
+        }
+        private void AsociereMaterie()
+        {
+                string cod = comboBox1.SelectedItem.ToString();
+                char secondLetter = cod[1];  // Extract the second letter (index 1)
+                string lastTwoNumbers = cod.Substring(cod.Length - 2);  // Extract the last two numbers
+                string combinedString = secondLetter.ToString() + lastTwoNumbers;
+                List<string> values = new List<string>();
                 try
                 {
                     using (var connection = new MySqlConnection(connectionString))
                     {
                         connection.Open();
-                        for (int i = 0; i < dataGridView1.RowCount; i++)
+                        Console.WriteLine("Connected to the database.");
+
+                        query = $"SELECT Acronim FROM discipline WHERE Cod like '{combinedString}%';";
+
+                        using (var command = new MySqlCommand(query, connection))
+                        using (var reader = command.ExecuteReader())
                         {
-                            if (i % rowCount == 0 && i != 0)
-                                nr++;
-                            DataGridViewRow row = dataGridView1.Rows[i];
-                            string cellValue = row.Cells["Nr. Matricol"].Value?.ToString();
-                            query = "UPDATE student SET Grupa = @grupa WHERE `Nr. Matricol` = @nr ;";
-                            using (var command = new MySqlCommand(query, connection))
+                            while (reader.Read())
                             {
-                                command.Parameters.AddWithValue("@grupa", comboBox1.SelectedItem + nr.ToString());
-                                command.Parameters.AddWithValue("@nr", cellValue);
-                                command.ExecuteNonQuery();
+                                string value = reader.GetString(0);
+                                values.Add(value);
+                            
                             }
-                            Console.WriteLine("Database updated successfully.");
+
                         }
+                        Console.WriteLine("Disconnected from the database.");
                     }
                 }
+            
                 catch (Exception ex)
                 {
                     Console.WriteLine("Error: " + ex.Message);
                 }
-                comboBox1_SelectedIndexChanged(null, null);
+
+                List<int> valuesList = new List<int>();
+
+                foreach (DataGridViewRow row in dataGridView1.Rows)
+                {
+
+                    if (!row.IsNewRow && row.Cells["Nr. Matricol"].Value != null)
+                    {
+                        if (int.TryParse(row.Cells["Nr. Matricol"].Value.ToString(), out int value))
+                        {
+                            valuesList.Add(value);
+                        }
+                    }
+                }
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+
+                    foreach (int matricol in valuesList)
+                    {
+                        foreach (string disciplina in values)
+                        {
+                            query = $"INSERT INTO note (Matricol, Disciplina, Nota) VALUES ({matricol}, '{disciplina}', 0);";
+
+                            using (var command = new MySqlCommand(query, connection))
+                            {
+                                command.ExecuteNonQuery();
+                            }
+                        }
+                    }
+
+                    Console.WriteLine("Entries added to the database.");
+                    Console.WriteLine("Disconnected from the database.");
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
         }
         private void InsertRowIntoTableGrupe(String Cod)
         {
@@ -746,7 +844,7 @@ namespace UniCatalog
             }
         }
 
-        private void comboBox1_SelectedIndexChanged(object sender, EventArgs e)
+        private void comboBox1_SelectedIndexChanged(object? sender, EventArgs? e)
         {
             if (currentTable == 4 || currentTable == 5 || currentTable == 8)
             {
@@ -918,10 +1016,10 @@ namespace UniCatalog
             {
 
                 String Ciclu = comboBox1.SelectedItem.ToString();
-                String Programul = comboBox3.SelectedItem.ToString();
+                String Programul = (comboBox3.SelectedIndex + 1).ToString();
                 int An = int.Parse(comboBox2.SelectedItem.ToString());
                 String Semestru = comboBox4.SelectedItem.ToString();
-                String cod = String.Concat(String.Concat(Ciclu.Substring(0, 1)[0], Programul.Substring(0, 2)) + An, Semestru);
+                String cod = String.Concat(String.Concat(Ciclu.Substring(0, 1)[0], Programul) + An, Semestru);
                 cod = cod + codCheck(cod);  // check the last number for the last disciplina
                 try
                 {
@@ -1070,7 +1168,7 @@ namespace UniCatalog
                     connection.Open();
                     Console.WriteLine("Connected to the database.");
 
-                    string query = "SELECT `Nr. Matricol` FROM student WHERE Grupa IS NULL ORDER BY `Media Inscriere` DESC;";
+                    string query = "SELECT `Nr. Matricol` FROM student WHERE Grupa IS NULL ORDER BY `Media Inscriere` DESC ;";
 
                     using (var command = new MySqlCommand(query, connection))
                     {
@@ -1206,12 +1304,16 @@ namespace UniCatalog
         private void noteToolStripMenuItem_Click(object sender, EventArgs e)
         {
             currentTable = 12;
-            SetControlsVisibility(false,false,false,true,false,false,false,true,true,false,false,false,true);
+            SetControlsVisibility(false, false, false, true, false, false, false, true, true, false, false, false, true);
             subjects.Clear();
             GetSubjects(disciplina);
+            foreach (string subject in subjects)
+            {
+                comboBox4.Items.Add(subject);
+            }
             query = "SELECT student.`Nr. Matricol`, student.Nume, student.Prenume,note.Disciplina, note.Nota FROM `student` JOIN `note` ON student.`Nr. Matricol`=note.Matricol WHERE note.Disciplina='" + subjects[0] + "';";
             ShowDataGrid(GetDataFromDatabase(query));
-            comboBox4.DataSource = subjects;
+        
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -1226,35 +1328,43 @@ namespace UniCatalog
 
         private void button4_Click(object sender, EventArgs e)
         {
-            string nota = textBox4.Text;
-            if (string.IsNullOrEmpty(nota))
+            if (comboBox4.SelectedIndex != -1)
             {
-                MessageBox.Show("Please enter a grade.");
-                return;
-            }
-            string query = "UPDATE note SET Nota='" + nota + "' WHERE Matricol='" + matricol + "' AND Disciplina='" + comboBox4.SelectedItem.ToString() + "';";
-            using (MySqlConnection connection = new MySqlConnection(connectionString))
-            {
-                using (MySqlCommand command = new MySqlCommand(query, connection))
+                string nota = textBox4.Text;
+                if (string.IsNullOrEmpty(nota))
                 {
-                    try
+                    MessageBox.Show("Please enter a grade.");
+                    return;
+                }
+                query = "UPDATE note SET Nota='" + nota + "' WHERE Matricol='" + matricol + "' AND Disciplina='" + comboBox4.SelectedItem.ToString() + "';";
+                using (MySqlConnection connection = new MySqlConnection(connectionString))
+                {
+                    using (MySqlCommand command = new MySqlCommand(query, connection))
                     {
-                        connection.Open();
-                        int rowsAffected = command.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
+                        try
                         {
-                            MessageBox.Show("Grade inserted into the database successfully.");
+                            connection.Open();
+                            int rowsAffected = command.ExecuteNonQuery();
+
+                            if (rowsAffected > 0)
+                            {
+                                MessageBox.Show("Grade inserted into the database successfully.");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            MessageBox.Show("Error: " + ex.Message);
                         }
                     }
-                    catch (Exception ex)
-                    {
-                        MessageBox.Show("Error: " + ex.Message);
-                    }
                 }
+                grades = GetDataFromDatabase(GetGrades(comboBox4.SelectedItem.ToString()));
+                ShowDataGrid(grades);
             }
-            grades = GetDataFromDatabase(GetGrades(comboBox4.SelectedItem.ToString()));
-            ShowDataGrid(grades);
+            else
+            {
+                MessageBox.Show("Selecteaza materia");
+            }
+            
         }
 
         private void button5_Click(object sender, EventArgs e)
