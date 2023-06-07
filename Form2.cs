@@ -476,6 +476,7 @@ namespace UniCatalog
         private void loadComboBox()
         {
             comboBox1.Items.Clear();
+            comboBox2.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -815,7 +816,8 @@ namespace UniCatalog
             comboBox1.Items.Clear();
             comboBox2.Items.Clear();
             comboBox3.Items.Clear();
-
+            comboBox4.Items.Clear();
+            comboBox4.Items.AddRange(new string[] { "A", "B" });
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -989,8 +991,6 @@ namespace UniCatalog
                     comboBox2.Items.Add(i);
                 }
             }
-
-
         }
 
         private void textboxload()
@@ -1102,6 +1102,9 @@ namespace UniCatalog
 
         private void studentiToolStripMenuItem_Click(object sender, EventArgs e)
         {
+            SetControlsVisibility(false, false, false, false, false);
+            comboBox2.Hide();
+            button1.Hide();
             currentTable = 7;
             LoadDataFromDatabase(7);
             SetControlsVisibility(false, false, false, false, false, true, false, false, false, false, false, false, false);
@@ -1127,7 +1130,6 @@ namespace UniCatalog
         }
         private void LoadGrupe()
         {
-            comboBox3.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1141,6 +1143,7 @@ namespace UniCatalog
                     {
                         using (var reader = command.ExecuteReader())
                         {
+                            comboBox3.Items.Clear();
                             while (reader.Read())
                             {
                                 string cod = reader.GetString("Cod");
@@ -1156,11 +1159,10 @@ namespace UniCatalog
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
-
         }
+
         private void LoadStudenti()
         {
-            comboBox1.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1174,6 +1176,7 @@ namespace UniCatalog
                     {
                         using (var reader = command.ExecuteReader())
                         {
+                            comboBox1.Items.Clear();
                             while (reader.Read())
                             {
                                 string nr = reader.GetString("Nr. Matricol");
@@ -1191,9 +1194,8 @@ namespace UniCatalog
             }
         }
 
-        private void adaugagrupa()
+        private void AdaugaGrupa(ComboBox comboBox)
         {
-            comboBox1.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1207,13 +1209,15 @@ namespace UniCatalog
                     {
                         using (var reader = command.ExecuteReader())
                         {
+                            comboBox.Items.Clear();
                             while (reader.Read())
                             {
                                 string cod = reader.GetString("Cod");
-                                comboBox1.Items.Add(cod);
+                                comboBox.Items.Add(cod);
                             }
                         }
                     }
+
                     Console.WriteLine("Disconnected from the database.");
                 }
             }
@@ -1222,13 +1226,14 @@ namespace UniCatalog
                 Console.WriteLine("Error: " + ex.Message);
             }
         }
+
         private void vizualizareGrupaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             currentTable = 10;
             SetControlsVisibility(false, false, false, false, false, true, false, false, false, true, false, true, false);
             adaugagrupa();
             comboBox3.Items.Clear();
-            for (int i = 1; i <= 5; i++)
+            for (int i = 1; i <= 4; i++)
             {
                 comboBox3.Items.Add(i);
             }
@@ -1241,7 +1246,7 @@ namespace UniCatalog
             currentTable = 11;
             SetControlsVisibility(false, false, false, false, true, false, false, false, false, true, false, true, false);
             button1.Text = "Imparte";
-            adaugagrupa();
+            AdaugaGrupa(comboBox1);
             comboBox3.Items.Clear();
             for (int i = 1; i <= 4; i++)
             {
