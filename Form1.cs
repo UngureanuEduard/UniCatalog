@@ -11,7 +11,7 @@ namespace UniCatalog
         private Form? currentForm;
         private List<Account> accountList;
         private string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
-        public string ins,dis;
+        public string ins, dis;
         public Form1()
         {
             accountList = new List<Account>();

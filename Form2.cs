@@ -476,7 +476,6 @@ namespace UniCatalog
         private void loadComboBox()
         {
             comboBox1.Items.Clear();
-            comboBox2.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -652,61 +651,62 @@ namespace UniCatalog
 
                     AsociereMaterie();
                 }
-                else {
+                else
+                {
                     MessageBox.Show("Selecteaza in cate vrei sa imparti ");
                 }
-                
+
             }
         }
         private void AsociereMaterie()
         {
-                string cod = comboBox1.SelectedItem.ToString();
-                char secondLetter = cod[1];  // Extract the second letter (index 1)
-                string lastTwoNumbers = cod.Substring(cod.Length - 2);  // Extract the last two numbers
-                string combinedString = secondLetter.ToString() + lastTwoNumbers;
-                List<string> values = new List<string>();
-                try
+            string cod = comboBox1.SelectedItem.ToString();
+            char secondLetter = cod[1];  // Extract the second letter (index 1)
+            string lastTwoNumbers = cod.Substring(cod.Length - 2);  // Extract the last two numbers
+            string combinedString = secondLetter.ToString() + lastTwoNumbers;
+            List<string> values = new List<string>();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
                 {
-                    using (var connection = new MySqlConnection(connectionString))
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+
+                    query = $"SELECT Acronim FROM discipline WHERE Cod like '{combinedString}%';";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    using (var reader = command.ExecuteReader())
                     {
-                        connection.Open();
-                        Console.WriteLine("Connected to the database.");
-
-                        query = $"SELECT Acronim FROM discipline WHERE Cod like '{combinedString}%';";
-
-                        using (var command = new MySqlCommand(query, connection))
-                        using (var reader = command.ExecuteReader())
+                        while (reader.Read())
                         {
-                            while (reader.Read())
-                            {
-                                string value = reader.GetString(0);
-                                values.Add(value);
-                            
-                            }
+                            string value = reader.GetString(0);
+                            values.Add(value);
 
                         }
-                        Console.WriteLine("Disconnected from the database.");
+
                     }
+                    Console.WriteLine("Disconnected from the database.");
                 }
-            
-                catch (Exception ex)
+            }
+
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            List<int> valuesList = new List<int>();
+
+            foreach (DataGridViewRow row in dataGridView1.Rows)
+            {
+
+                if (!row.IsNewRow && row.Cells["Nr. Matricol"].Value != null)
                 {
-                    Console.WriteLine("Error: " + ex.Message);
-                }
-
-                List<int> valuesList = new List<int>();
-
-                foreach (DataGridViewRow row in dataGridView1.Rows)
-                {
-
-                    if (!row.IsNewRow && row.Cells["Nr. Matricol"].Value != null)
+                    if (int.TryParse(row.Cells["Nr. Matricol"].Value.ToString(), out int value))
                     {
-                        if (int.TryParse(row.Cells["Nr. Matricol"].Value.ToString(), out int value))
-                        {
-                            valuesList.Add(value);
-                        }
+                        valuesList.Add(value);
                     }
                 }
+            }
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -816,8 +816,7 @@ namespace UniCatalog
             comboBox1.Items.Clear();
             comboBox2.Items.Clear();
             comboBox3.Items.Clear();
-            comboBox4.Items.Clear();
-            comboBox4.Items.AddRange(new string[] { "A", "B" });
+
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -991,6 +990,8 @@ namespace UniCatalog
                     comboBox2.Items.Add(i);
                 }
             }
+
+
         }
 
         private void textboxload()
@@ -1102,9 +1103,6 @@ namespace UniCatalog
 
         private void studentiToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SetControlsVisibility(false, false, false, false, false);
-            comboBox2.Hide();
-            button1.Hide();
             currentTable = 7;
             LoadDataFromDatabase(7);
             SetControlsVisibility(false, false, false, false, false, true, false, false, false, false, false, false, false);
@@ -1130,6 +1128,7 @@ namespace UniCatalog
         }
         private void LoadGrupe()
         {
+            comboBox3.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1143,7 +1142,6 @@ namespace UniCatalog
                     {
                         using (var reader = command.ExecuteReader())
                         {
-                            comboBox3.Items.Clear();
                             while (reader.Read())
                             {
                                 string cod = reader.GetString("Cod");
@@ -1159,10 +1157,11 @@ namespace UniCatalog
             {
                 Console.WriteLine("Error: " + ex.Message);
             }
-        }
 
+        }
         private void LoadStudenti()
         {
+            comboBox1.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1176,7 +1175,6 @@ namespace UniCatalog
                     {
                         using (var reader = command.ExecuteReader())
                         {
-                            comboBox1.Items.Clear();
                             while (reader.Read())
                             {
                                 string nr = reader.GetString("Nr. Matricol");
@@ -1194,8 +1192,9 @@ namespace UniCatalog
             }
         }
 
-        private void AdaugaGrupa(ComboBox comboBox)
+        private void adaugagrupa()
         {
+            comboBox1.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1209,15 +1208,13 @@ namespace UniCatalog
                     {
                         using (var reader = command.ExecuteReader())
                         {
-                            comboBox.Items.Clear();
                             while (reader.Read())
                             {
                                 string cod = reader.GetString("Cod");
-                                comboBox.Items.Add(cod);
+                                comboBox1.Items.Add(cod);
                             }
                         }
                     }
-
                     Console.WriteLine("Disconnected from the database.");
                 }
             }
@@ -1226,14 +1223,13 @@ namespace UniCatalog
                 Console.WriteLine("Error: " + ex.Message);
             }
         }
-
         private void vizualizareGrupaToolStripMenuItem_Click(object sender, EventArgs e)
         {
             currentTable = 10;
             SetControlsVisibility(false, false, false, false, false, true, false, false, false, true, false, true, false);
             adaugagrupa();
             comboBox3.Items.Clear();
-            for (int i = 1; i <= 4; i++)
+            for (int i = 1; i <= 5; i++)
             {
                 comboBox3.Items.Add(i);
             }
@@ -1246,7 +1242,7 @@ namespace UniCatalog
             currentTable = 11;
             SetControlsVisibility(false, false, false, false, true, false, false, false, false, true, false, true, false);
             button1.Text = "Imparte";
-            AdaugaGrupa(comboBox1);
+            adaugagrupa();
             comboBox3.Items.Clear();
             for (int i = 1; i <= 4; i++)
             {
@@ -1318,7 +1314,7 @@ namespace UniCatalog
             }
             query = "SELECT student.`Nr. Matricol`, student.Nume, student.Prenume,note.Disciplina, note.Nota FROM `student` JOIN `note` ON student.`Nr. Matricol`=note.Matricol WHERE note.Disciplina='" + subjects[0] + "';";
             ShowDataGrid(GetDataFromDatabase(query));
-        
+
         }
 
         private void comboBox4_SelectedIndexChanged(object sender, EventArgs e)
@@ -1369,7 +1365,7 @@ namespace UniCatalog
             {
                 MessageBox.Show("Selecteaza materia");
             }
-            
+
         }
 
         private void button5_Click(object sender, EventArgs e)
