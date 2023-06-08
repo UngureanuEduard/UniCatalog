@@ -57,6 +57,7 @@ namespace UniCatalog
             if (Number / 100 >= 1)
             {
                 noteToolStripMenuItem.Visible = true;
+
             }
         }
 

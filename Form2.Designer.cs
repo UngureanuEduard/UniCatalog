@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             components = new System.ComponentModel.Container();
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form2));
             label1 = new Label();
             contextMenuStrip1 = new ContextMenuStrip(components);
             menuStrip1 = new MenuStrip();
@@ -46,6 +47,7 @@
             vizualizareGrupaToolStripMenuItem = new ToolStripMenuItem();
             divizareAutomataToolStripMenuItem = new ToolStripMenuItem();
             noteToolStripMenuItem = new ToolStripMenuItem();
+            catalogToolStripMenuItem = new ToolStripMenuItem();
             helpToolStripMenuItem = new ToolStripMenuItem();
             dataGridView1 = new DataGridView();
             button2 = new Button();
@@ -61,7 +63,6 @@
             button3 = new Button();
             button4 = new Button();
             button5 = new Button();
-            catalogToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -100,6 +101,7 @@
             // 
             // utilizatoriToolStripMenuItem
             // 
+            utilizatoriToolStripMenuItem.Image = (Image)resources.GetObject("utilizatoriToolStripMenuItem.Image");
             utilizatoriToolStripMenuItem.Name = "utilizatoriToolStripMenuItem";
             utilizatoriToolStripMenuItem.Size = new Size(236, 26);
             utilizatoriToolStripMenuItem.Text = "Users";
@@ -107,6 +109,7 @@
             // 
             // cicluDeInvatamantToolStripMenuItem
             // 
+            cicluDeInvatamantToolStripMenuItem.Image = (Image)resources.GetObject("cicluDeInvatamantToolStripMenuItem.Image");
             cicluDeInvatamantToolStripMenuItem.Name = "cicluDeInvatamantToolStripMenuItem";
             cicluDeInvatamantToolStripMenuItem.Size = new Size(236, 26);
             cicluDeInvatamantToolStripMenuItem.Text = "Ciclu De Invatamant";
@@ -114,6 +117,7 @@
             // 
             // programeDeStudiiToolStripMenuItem
             // 
+            programeDeStudiiToolStripMenuItem.Image = (Image)resources.GetObject("programeDeStudiiToolStripMenuItem.Image");
             programeDeStudiiToolStripMenuItem.Name = "programeDeStudiiToolStripMenuItem";
             programeDeStudiiToolStripMenuItem.Size = new Size(236, 26);
             programeDeStudiiToolStripMenuItem.Text = "Programe De Studii";
@@ -122,12 +126,14 @@
             // planuriDeInvatamantToolStripMenuItem
             // 
             planuriDeInvatamantToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { disciplineToolStripMenuItem, vizualizareToolStripMenuItem });
+            planuriDeInvatamantToolStripMenuItem.Image = (Image)resources.GetObject("planuriDeInvatamantToolStripMenuItem.Image");
             planuriDeInvatamantToolStripMenuItem.Name = "planuriDeInvatamantToolStripMenuItem";
             planuriDeInvatamantToolStripMenuItem.Size = new Size(236, 26);
             planuriDeInvatamantToolStripMenuItem.Text = "Planuri de Invatamant";
             // 
             // disciplineToolStripMenuItem
             // 
+            disciplineToolStripMenuItem.Image = (Image)resources.GetObject("disciplineToolStripMenuItem.Image");
             disciplineToolStripMenuItem.Name = "disciplineToolStripMenuItem";
             disciplineToolStripMenuItem.Size = new Size(164, 26);
             disciplineToolStripMenuItem.Text = "Discipline";
@@ -135,6 +141,7 @@
             // 
             // vizualizareToolStripMenuItem
             // 
+            vizualizareToolStripMenuItem.Image = (Image)resources.GetObject("vizualizareToolStripMenuItem.Image");
             vizualizareToolStripMenuItem.Name = "vizualizareToolStripMenuItem";
             vizualizareToolStripMenuItem.Size = new Size(164, 26);
             vizualizareToolStripMenuItem.Text = "Vizualizare";
@@ -142,6 +149,7 @@
             // 
             // studentiToolStripMenuItem
             // 
+            studentiToolStripMenuItem.Image = (Image)resources.GetObject("studentiToolStripMenuItem.Image");
             studentiToolStripMenuItem.Name = "studentiToolStripMenuItem";
             studentiToolStripMenuItem.Size = new Size(236, 26);
             studentiToolStripMenuItem.Text = "Studenti";
@@ -150,12 +158,14 @@
             // grupeToolStripMenuItem
             // 
             grupeToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { asociereGrupaToolStripMenuItem, creareGrupaToolStripMenuItem, vizualizareGrupaToolStripMenuItem, divizareAutomataToolStripMenuItem });
+            grupeToolStripMenuItem.Image = (Image)resources.GetObject("grupeToolStripMenuItem.Image");
             grupeToolStripMenuItem.Name = "grupeToolStripMenuItem";
             grupeToolStripMenuItem.Size = new Size(236, 26);
             grupeToolStripMenuItem.Text = "Grupe";
             // 
             // asociereGrupaToolStripMenuItem
             // 
+            asociereGrupaToolStripMenuItem.Image = (Image)resources.GetObject("asociereGrupaToolStripMenuItem.Image");
             asociereGrupaToolStripMenuItem.Name = "asociereGrupaToolStripMenuItem";
             asociereGrupaToolStripMenuItem.Size = new Size(212, 26);
             asociereGrupaToolStripMenuItem.Text = "Asociere Grupa";
@@ -163,6 +173,7 @@
             // 
             // creareGrupaToolStripMenuItem
             // 
+            creareGrupaToolStripMenuItem.Image = (Image)resources.GetObject("creareGrupaToolStripMenuItem.Image");
             creareGrupaToolStripMenuItem.Name = "creareGrupaToolStripMenuItem";
             creareGrupaToolStripMenuItem.Size = new Size(212, 26);
             creareGrupaToolStripMenuItem.Text = "Creare Grupa";
@@ -170,6 +181,7 @@
             // 
             // vizualizareGrupaToolStripMenuItem
             // 
+            vizualizareGrupaToolStripMenuItem.Image = (Image)resources.GetObject("vizualizareGrupaToolStripMenuItem.Image");
             vizualizareGrupaToolStripMenuItem.Name = "vizualizareGrupaToolStripMenuItem";
             vizualizareGrupaToolStripMenuItem.Size = new Size(212, 26);
             vizualizareGrupaToolStripMenuItem.Text = "Vizualizare Grupa";
@@ -177,6 +189,7 @@
             // 
             // divizareAutomataToolStripMenuItem
             // 
+            divizareAutomataToolStripMenuItem.Image = (Image)resources.GetObject("divizareAutomataToolStripMenuItem.Image");
             divizareAutomataToolStripMenuItem.Name = "divizareAutomataToolStripMenuItem";
             divizareAutomataToolStripMenuItem.Size = new Size(212, 26);
             divizareAutomataToolStripMenuItem.Text = "DivizareAutomata";
@@ -184,10 +197,19 @@
             // 
             // noteToolStripMenuItem
             // 
+            noteToolStripMenuItem.Image = (Image)resources.GetObject("noteToolStripMenuItem.Image");
             noteToolStripMenuItem.Name = "noteToolStripMenuItem";
             noteToolStripMenuItem.Size = new Size(236, 26);
             noteToolStripMenuItem.Text = "Note";
             noteToolStripMenuItem.Click += NoteToolStripMenuItem_Click;
+            // 
+            // catalogToolStripMenuItem
+            // 
+            catalogToolStripMenuItem.Image = (Image)resources.GetObject("catalogToolStripMenuItem.Image");
+            catalogToolStripMenuItem.Name = "catalogToolStripMenuItem";
+            catalogToolStripMenuItem.Size = new Size(236, 26);
+            catalogToolStripMenuItem.Text = "Catalog";
+            catalogToolStripMenuItem.Click += CatalogToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -333,13 +355,6 @@
             button5.UseVisualStyleBackColor = true;
             button5.Click += Button5_Click;
             // 
-            // catalogToolStripMenuItem
-            // 
-            catalogToolStripMenuItem.Name = "catalogToolStripMenuItem";
-            catalogToolStripMenuItem.Size = new Size(236, 26);
-            catalogToolStripMenuItem.Text = "Catalog";
-            catalogToolStripMenuItem.Click += CatalogToolStripMenuItem_Click;
-            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -363,7 +378,7 @@
             Controls.Add(label1);
             MainMenuStrip = menuStrip1;
             Name = "Form2";
-            Text = "Admin";
+            Text = "UniCatalog";
             Load += Form2_Load;
             menuStrip1.ResumeLayout(false);
             menuStrip1.PerformLayout();
