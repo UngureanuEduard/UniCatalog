@@ -61,6 +61,7 @@
             button3 = new Button();
             button4 = new Button();
             button5 = new Button();
+            catalogToolStripMenuItem = new ToolStripMenuItem();
             menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             SuspendLayout();
@@ -92,7 +93,7 @@
             // 
             // optiuniToolStripMenuItem
             // 
-            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem, programeDeStudiiToolStripMenuItem, planuriDeInvatamantToolStripMenuItem, studentiToolStripMenuItem, grupeToolStripMenuItem, noteToolStripMenuItem });
+            optiuniToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { utilizatoriToolStripMenuItem, cicluDeInvatamantToolStripMenuItem, programeDeStudiiToolStripMenuItem, planuriDeInvatamantToolStripMenuItem, studentiToolStripMenuItem, grupeToolStripMenuItem, noteToolStripMenuItem, catalogToolStripMenuItem });
             optiuniToolStripMenuItem.Name = "optiuniToolStripMenuItem";
             optiuniToolStripMenuItem.Size = new Size(75, 24);
             optiuniToolStripMenuItem.Text = "Options";
@@ -332,6 +333,13 @@
             button5.UseVisualStyleBackColor = true;
             button5.Click += button5_Click;
             // 
+            // catalogToolStripMenuItem
+            // 
+            catalogToolStripMenuItem.Name = "catalogToolStripMenuItem";
+            catalogToolStripMenuItem.Size = new Size(236, 26);
+            catalogToolStripMenuItem.Text = "Catalog";
+            catalogToolStripMenuItem.Click += catalogToolStripMenuItem_Click;
+            // 
             // Form2
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
@@ -398,5 +406,6 @@
         private ToolStripMenuItem noteToolStripMenuItem;
         private Button button4;
         private Button button5;
+        private ToolStripMenuItem catalogToolStripMenuItem;
     }
 }

@@ -1,6 +1,7 @@
 ﻿using MySql.Data.MySqlClient;
 using System.Data;
-using System.Diagnostics;
+using System.Text;
+using System.Windows.Forms;
 
 namespace UniCatalog
 {
@@ -53,6 +54,7 @@ namespace UniCatalog
                 planuriDeInvatamantToolStripMenuItem.Visible = true;
                 studentiToolStripMenuItem.Visible = true;
                 grupeToolStripMenuItem.Visible = true;
+                catalogToolStripMenuItem.Visible = true;
             }
             if (Number / 100 >= 1)
             {
@@ -78,7 +80,8 @@ namespace UniCatalog
                         3 => "SELECT * FROM programedestudii;",
                         4 => "SELECT * FROM discipline;",
                         7 => "SELECT * FROM student;",
-                        8 => "Select * FROM grupe",
+                        8 => "SELECT * FROM grupe",
+                        13 => "SELECT * FROM catalog",
                         _ => query
                     };
 
@@ -657,7 +660,241 @@ namespace UniCatalog
                 }
 
             }
+            else if (currentTable == 13)
+            {
+                if (comboBox1.SelectedIndex == -1)
+                {
+                    MessageBox.Show("Trebuie sa selectezi grupa si semestrul");
+                }
+                else
+                {
+                    string grupa = comboBox1.SelectedItem.ToString();
+                    List<string> matricol = new List<string>();
+                    List<string> nume = new List<string>();
+                    List<string> prenume = new List<string>();
+                    try
+                    {
+                        using (var connection = new MySqlConnection(connectionString))
+                        {
+                            connection.Open();
+                            Console.WriteLine("Connected to the database.");
+
+                            query = $"SELECT `Nr. Matricol`,Nume,Prenume  FROM student WHERE Grupa like '{grupa}%';";
+
+                            using (var command = new MySqlCommand(query, connection))
+                            using (var reader = command.ExecuteReader())
+                            {
+                                while (reader.Read())
+                                {
+                                    string value = reader.GetString(0);
+                                    matricol.Add(value);
+                                    value = reader.GetString(1);
+                                    nume.Add(value);
+                                    value = reader.GetString(2);
+                                    prenume.Add(value);
+                                }
+
+                            }
+                            Console.WriteLine("Disconnected from the database.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
+                    List<float> medii1 = new List<float>();
+                    medii1 = MediePeSemenstru("A", grupa, matricol.Count);
+                    List<float> medii2 = new List<float>();
+                    medii2 = MediePeSemenstru("B", grupa, matricol.Count);
+                    List<float> mediaF = new List<float>();
+                    for (int i = 0; i < medii1.Count; i++)
+                    {
+                        mediaF.Add((medii1[i] + medii2[i]) / 2);
+                    }
+                    List<string> Restantieri = new List<string>();
+                    Restantieri = restantieri(matricol);
+
+
+                    try
+                    {
+                        using (var connection = new MySqlConnection(connectionString))
+                        {
+                            connection.Open();
+
+                            query = "INSERT INTO catalog (Matricol, Nume, Prenume, MS1,MS2,MF,Promovat) VALUES (@matricol, @nume, @prenume, @ms1,@ms2,@mf,@promovat);";
+                            for (int i = 0; i < mediaF.Count; i++)
+                            {
+                                try
+                                {
+                                    using (var command = new MySqlCommand(query, connection))
+                                    {
+                                        command.Parameters.AddWithValue("@matricol", matricol[i]);
+                                        command.Parameters.AddWithValue("@nume", nume[i]);
+                                        command.Parameters.AddWithValue("@prenume", prenume[i]);
+                                        command.Parameters.AddWithValue("@ms1", medii1[i]);
+                                        command.Parameters.AddWithValue("@ms2", medii2[i]);
+                                        command.Parameters.AddWithValue("@mf", mediaF[i]);
+                                        if (Restantieri.Contains(matricol[i]))
+                                        {
+                                            command.Parameters.AddWithValue("@promovat", "Restantier");
+                                        }
+                                        else
+                                        {
+                                            command.Parameters.AddWithValue("@promovat", "Promovat");
+                                        }
+                                        command.ExecuteNonQuery();
+                                    }
+
+                                }
+                                catch (Exception ex)
+                                {
+                                    Console.WriteLine("Error: " + ex.Message);
+                                }
+
+                            }
+
+                            Console.WriteLine("New row inserted into the database.");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
+                    LoadDataFromDatabase(13);
+
+                }
+
+            }
         }
+
+        List<string> restantieri(List<String> Matricol)
+        {
+            List<string> Restantieri = new List<string>();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+                    foreach (String mat in Matricol)
+                    {
+                        query = $"SELECT DISTINCT Matricol FROM note WHERE Nota<5 AND Matricol= '{mat}';";
+
+                        using (var command = new MySqlCommand(query, connection))
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                string value = reader.GetString(0);
+                                Restantieri.Add(value);
+                            }
+
+                        }
+                        Console.WriteLine("Disconnected from the database.");
+
+                    }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+
+            return Restantieri;
+        }
+
+
+        List<float> MediePeSemenstru(string sem, string grupa, int n)
+        {
+            List<string> acronim = new List<string>();
+            List<int> credite = new List<int>();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+
+                    query = $"SELECT Acronim ,Credite  FROM discipline WHERE Cod like '{grupa[1].ToString() + grupa.Substring(grupa.Length - 2)}{sem}%';";
+
+                    using (var command = new MySqlCommand(query, connection))
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            string value = reader.GetString(0);
+                            acronim.Add(value);
+                            value = reader.GetString(1);
+                            credite.Add(int.Parse(value));
+                        }
+
+                    }
+                    Console.WriteLine("Disconnected from the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            List<float> note = new List<float>();
+            try
+            {
+                using (var connection = new MySqlConnection(connectionString))
+                {
+                    connection.Open();
+                    Console.WriteLine("Connected to the database.");
+
+                    foreach (string acron in acronim)
+                    {
+                        query = $"SELECT Nota FROM note WHERE Disciplina ='{acron}';";
+
+                        using (var command = new MySqlCommand(query, connection))
+                        using (var reader = command.ExecuteReader())
+                        {
+                            while (reader.Read())
+                            {
+                                float value = reader.GetFloat(0);
+                                note.Add(value);
+                            }
+
+                        }
+
+                    }
+
+                    Console.WriteLine("Disconnected from the database.");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Error: " + ex.Message);
+            }
+            List<float> medii = new List<float>();
+            int nrMedii = n;
+            int i = 0;
+            float m = 0;
+            float sumacredite = 0;
+
+            for (int j = 0; j < credite.Count; j++)
+                sumacredite = sumacredite + credite[j];
+
+            while (i < nrMedii)
+            {
+                float medie = 0;
+                int noteParcurse = 0;
+                int index = i;
+                while (noteParcurse < acronim.Count)
+                {
+                    medie = medie + note[index] * credite[noteParcurse];
+                    index = index + nrMedii;
+                    noteParcurse++;
+                }
+                medii.Add(medie / sumacredite);
+                i++;
+            }
+            return medii;
+        }
+
         private void AsociereMaterie()
         {
             string cod = comboBox1.SelectedItem.ToString();
@@ -908,6 +1145,29 @@ namespace UniCatalog
                 }
                 dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
             }
+            else if (currentTable == 13)
+            {
+                try
+                {
+                    using (var connection = new MySqlConnection(connectionString))
+                    {
+                        connection.Open();
+                        query = "DELETE FROM catalog";
+                        using (var command = new MySqlCommand(query, connection))
+                        {
+                            command.ExecuteNonQuery();
+                        }
+
+                        Console.WriteLine("Row deleted from the database.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine("Error: " + ex.Message);
+                }
+                LoadDataFromDatabase(13);
+
+            }
         }
 
         private void comboBox3_SelectedIndexChanged(object sender, EventArgs e)
@@ -1013,42 +1273,69 @@ namespace UniCatalog
 
         private void button3_Click(object sender, EventArgs e)
         {
-            if (!string.IsNullOrEmpty(textBox2.Text) && !string.IsNullOrEmpty(textBox3.Text) && !string.IsNullOrEmpty(textBox4.Text) && textBox2.Text != "Nume" && textBox3.Text != "Acronim" && textBox4.Text != "Credite")
+            if(currentTable!=13)
             {
-
-                String Ciclu = comboBox1.SelectedItem.ToString();
-                String Programul = (comboBox3.SelectedIndex + 1).ToString();
-                int An = int.Parse(comboBox2.SelectedItem.ToString());
-                String Semestru = comboBox4.SelectedItem.ToString();
-                String cod = String.Concat(String.Concat(Ciclu.Substring(0, 1)[0], Programul) + An, Semestru);
-                cod = cod + codCheck(cod);  // check the last number for the last disciplina
-                try
+                if (!string.IsNullOrEmpty(textBox2.Text) && !string.IsNullOrEmpty(textBox3.Text) && !string.IsNullOrEmpty(textBox4.Text) && textBox2.Text != "Nume" && textBox3.Text != "Acronim" && textBox4.Text != "Credite")
                 {
-                    using (var connection = new MySqlConnection(connectionString))
+
+                    String Ciclu = comboBox1.SelectedItem.ToString();
+                    String Programul = (comboBox3.SelectedIndex + 1).ToString();
+                    int An = int.Parse(comboBox2.SelectedItem.ToString());
+                    String Semestru = comboBox4.SelectedItem.ToString();
+                    String cod = String.Concat(String.Concat(Ciclu.Substring(0, 1)[0], Programul) + An, Semestru);
+                    cod = cod + codCheck(cod);  // check the last number for the last disciplina
+                    try
                     {
-                        connection.Open();
-                        string query = "INSERT INTO discipline (Cod, Nume, Acronim, Credite) VALUES (@cod, @nume, @acronim, @credite);";
-                        using (var command = new MySqlCommand(query, connection))
+                        using (var connection = new MySqlConnection(connectionString))
                         {
-                            command.Parameters.AddWithValue("@cod", cod);
-                            command.Parameters.AddWithValue("@nume", textBox2.Text);
-                            command.Parameters.AddWithValue("@acronim", textBox3.Text);
-                            command.Parameters.AddWithValue("@credite", textBox4.Text);
-                            command.ExecuteNonQuery();
-                        }
+                            connection.Open();
+                            string query = "INSERT INTO discipline (Cod, Nume, Acronim, Credite) VALUES (@cod, @nume, @acronim, @credite);";
+                            using (var command = new MySqlCommand(query, connection))
+                            {
+                                command.Parameters.AddWithValue("@cod", cod);
+                                command.Parameters.AddWithValue("@nume", textBox2.Text);
+                                command.Parameters.AddWithValue("@acronim", textBox3.Text);
+                                command.Parameters.AddWithValue("@credite", textBox4.Text);
+                                command.ExecuteNonQuery();
+                            }
 
-                        Console.WriteLine("New row inserted into the database.");
+                            Console.WriteLine("New row inserted into the database.");
+                        }
                     }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine("Error: " + ex.Message);
+                    }
+                    LoadDataFromDatabase(4);
                 }
-                catch (Exception ex)
+                else
                 {
-                    Console.WriteLine("Error: " + ex.Message);
+                    MessageBox.Show("Complete the fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
                 }
-                LoadDataFromDatabase(4);
+
             }
             else
             {
-                MessageBox.Show("Complete the fields", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                ExportToExcel_Click(null,null);
+            }
+            
+        }
+        private void ExportToExcel_Click(object sender, EventArgs e)
+        {
+            dataGridView1.SelectAll();
+            dataGridView1.ClipboardCopyMode = DataGridViewClipboardCopyMode.EnableAlwaysIncludeHeaderText;
+            DataObject copyData = dataGridView1.GetClipboardContent();
+
+            if (copyData != null)
+            {
+                Clipboard.SetDataObject(copyData);
+                Microsoft.Office.Interop.Excel.Application xlApp = new Microsoft.Office.Interop.Excel.Application();
+                xlApp.Visible = true;
+                Microsoft.Office.Interop.Excel.Workbook xlWorkbook = xlApp.Workbooks.Add();
+                Microsoft.Office.Interop.Excel.Worksheet xlWorksheet = (Microsoft.Office.Interop.Excel.Worksheet)xlWorkbook.Worksheets[1];
+                Microsoft.Office.Interop.Excel.Range xlRange = (Microsoft.Office.Interop.Excel.Range)xlWorksheet.Cells[1, 1];
+                xlRange.Select();
+                xlWorksheet.PasteSpecial(xlRange, Type.Missing, Type.Missing, Type.Missing, Type.Missing, Type.Missing, true);
             }
         }
 
@@ -1128,7 +1415,10 @@ namespace UniCatalog
         }
         private void LoadGrupe()
         {
-            comboBox3.Items.Clear();
+            if (currentTable != 13)
+                comboBox3.Items.Clear();
+            else
+                comboBox1.Items.Clear();
             try
             {
                 using (var connection = new MySqlConnection(connectionString))
@@ -1145,7 +1435,10 @@ namespace UniCatalog
                             while (reader.Read())
                             {
                                 string cod = reader.GetString("Cod");
-                                comboBox3.Items.Add(cod);
+                                if (currentTable != 13)
+                                    comboBox3.Items.Add(cod);
+                                else
+                                    comboBox1.Items.Add(cod);
                             }
                         }
                     }
@@ -1407,6 +1700,16 @@ namespace UniCatalog
                 DataGridViewRow selectedRow = dataGridView1.Rows[e.RowIndex];
                 matricol = selectedRow.Cells[0].Value.ToString();
             }
+        }
+
+        private void catalogToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            currentTable = 13;
+            SetControlsVisibility(false, false, false, false, true, false, true, false, false, true, false, false, false);
+            LoadDataFromDatabase(13);
+            LoadGrupe();
+            button3.Text = "Exporta";
+            button1.Text = "Genereaza";
         }
     }
 }
