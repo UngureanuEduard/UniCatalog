@@ -482,7 +482,7 @@ namespace UniCatalog
                     {
                         command.Parameters.AddWithValue("@ciclu", comboBox1.SelectedItem.ToString());
                         command.Parameters.AddWithValue("@programul", textBox1.Text);
-                        command.Parameters.AddWithValue("@durata", comboBox2.SelectedIndex + 2);
+                        command.Parameters.AddWithValue("@durata", int.Parse(comboBox2.SelectedItem.ToString()));
                         command.Parameters.AddWithValue("@cod", comboBox4.SelectedItem);
                         command.ExecuteNonQuery();
                     }
@@ -888,10 +888,17 @@ namespace UniCatalog
                 {
                     foreach (string disciplina in values)
                     {
-                        query = $"INSERT INTO note (Matricol, Disciplina, Nota) VALUES ({matricol}, '{disciplina}', 0);";
+                        try
+                        {   
+                            query = $"INSERT INTO note (Matricol, Disciplina, Nota) VALUES ({matricol}, '{disciplina}', 0);";
+                            using var command = new MySqlCommand(query, connection);
+                            command.ExecuteNonQuery();
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine("Error: " + ex.Message);
+                        }
 
-                        using var command = new MySqlCommand(query, connection);
-                        command.ExecuteNonQuery();
                     }
                 }
 
