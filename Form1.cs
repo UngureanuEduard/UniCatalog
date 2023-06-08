@@ -8,10 +8,9 @@ namespace UniCatalog
 {
     public partial class Form1 : Form
     {
-        private Form? currentForm;
-        private List<Account> accountList;
-        private string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
-        public string ins, dis;
+        private readonly List<Account> accountList;
+        private readonly string connectionString = "Server=localhost;Database=unicatalog;Uid=root;";
+        public string ?ins, dis;
         public Form1()
         {
             accountList = new List<Account>();
@@ -23,31 +22,27 @@ namespace UniCatalog
             textBox2.PasswordChar = '*';
             try
             {
-                using (MySqlConnection connection = new(connectionString))
+                using MySqlConnection connection = new(connectionString);
+                connection.Open();
+                Console.WriteLine("Connected to the database.");
+
+                string query = "SELECT * FROM conturi;";
+                using (MySqlCommand command = new(query, connection))
                 {
-                    connection.Open();
-                    Console.WriteLine("Connected to the database.");
-
-                    string query = "SELECT * FROM conturi;";
-                    using (MySqlCommand command = new MySqlCommand(query, connection))
+                    using MySqlDataReader reader = command.ExecuteReader();
+                    while (reader.Read())
                     {
-                        using (MySqlDataReader reader = command.ExecuteReader())
+                        Account account = new()
                         {
-                            while (reader.Read())
-                            {
-                                Account account = new Account
-                                {
-                                    User = reader.GetString("User"),
-                                    Password = reader.GetString("Password"),
-                                    UserType = reader.GetInt32("User Type")
-                                };
-                                accountList.Add(account);
-                            }
-                        }
+                            User = reader.GetString("User"),
+                            Password = reader.GetString("Password"),
+                            UserType = reader.GetInt32("User Type")
+                        };
+                        accountList.Add(account);
                     }
-
-                    Console.WriteLine("Disconnected from the database.");
                 }
+
+                Console.WriteLine("Disconnected from the database.");
             }
             catch (Exception ex)
             {
@@ -55,7 +50,7 @@ namespace UniCatalog
             }
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private void Button1_Click(object sender, EventArgs e)
         {
             string username = textBox1.Text;
             string password = textBox2.Text;
@@ -71,8 +66,10 @@ namespace UniCatalog
                 if (account.User == username && account.Password == password)
                 {
                     found = account.UserType;
-                    Form2 form2 = new Form2(dis);
-                    form2.Number = found;
+                    Form2 form2 = new(dis)
+                    {
+                        Number = found
+                    };
                     form2.Show();
                     this.Hide();
                     break;
@@ -88,17 +85,15 @@ namespace UniCatalog
             DataTable data = new();
             try
             {
-                using (var connection = new MySqlConnection(connectionString))
+                using var connection = new MySqlConnection(connectionString);
+                connection.Open();
+                Console.WriteLine("Connected to the database.");
+                using (var command = new MySqlCommand(query, connection))
+                using (var reader = command.ExecuteReader())
                 {
-                    connection.Open();
-                    Console.WriteLine("Connected to the database.");
-                    using (var command = new MySqlCommand(query, connection))
-                    using (var reader = command.ExecuteReader())
-                    {
-                        data.Load(reader);
-                    }
-                    Console.WriteLine("Disconnected from the database.");
+                    data.Load(reader);
                 }
+                Console.WriteLine("Disconnected from the database.");
             }
             catch (Exception ex)
             {

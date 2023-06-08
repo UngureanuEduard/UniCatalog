@@ -103,21 +103,21 @@
             utilizatoriToolStripMenuItem.Name = "utilizatoriToolStripMenuItem";
             utilizatoriToolStripMenuItem.Size = new Size(236, 26);
             utilizatoriToolStripMenuItem.Text = "Users";
-            utilizatoriToolStripMenuItem.Click += utilizatoriToolStripMenuItem_Click;
+            utilizatoriToolStripMenuItem.Click += UtilizatoriToolStripMenuItem_Click;
             // 
             // cicluDeInvatamantToolStripMenuItem
             // 
             cicluDeInvatamantToolStripMenuItem.Name = "cicluDeInvatamantToolStripMenuItem";
             cicluDeInvatamantToolStripMenuItem.Size = new Size(236, 26);
             cicluDeInvatamantToolStripMenuItem.Text = "Ciclu De Invatamant";
-            cicluDeInvatamantToolStripMenuItem.Click += cicluDeInvatamantToolStripMenuItem_Click;
+            cicluDeInvatamantToolStripMenuItem.Click += CicluDeInvatamantToolStripMenuItem_Click;
             // 
             // programeDeStudiiToolStripMenuItem
             // 
             programeDeStudiiToolStripMenuItem.Name = "programeDeStudiiToolStripMenuItem";
             programeDeStudiiToolStripMenuItem.Size = new Size(236, 26);
             programeDeStudiiToolStripMenuItem.Text = "Programe De Studii";
-            programeDeStudiiToolStripMenuItem.Click += programeDeStudiiToolStripMenuItem_Click;
+            programeDeStudiiToolStripMenuItem.Click += ProgrameDeStudiiToolStripMenuItem_Click;
             // 
             // planuriDeInvatamantToolStripMenuItem
             // 
@@ -131,21 +131,21 @@
             disciplineToolStripMenuItem.Name = "disciplineToolStripMenuItem";
             disciplineToolStripMenuItem.Size = new Size(164, 26);
             disciplineToolStripMenuItem.Text = "Discipline";
-            disciplineToolStripMenuItem.Click += disciplineToolStripMenuItem_Click;
+            disciplineToolStripMenuItem.Click += DisciplineToolStripMenuItem_Click;
             // 
             // vizualizareToolStripMenuItem
             // 
             vizualizareToolStripMenuItem.Name = "vizualizareToolStripMenuItem";
             vizualizareToolStripMenuItem.Size = new Size(164, 26);
             vizualizareToolStripMenuItem.Text = "Vizualizare";
-            vizualizareToolStripMenuItem.Click += vizualizareToolStripMenuItem_Click;
+            vizualizareToolStripMenuItem.Click += VizualizareToolStripMenuItem_Click;
             // 
             // studentiToolStripMenuItem
             // 
             studentiToolStripMenuItem.Name = "studentiToolStripMenuItem";
             studentiToolStripMenuItem.Size = new Size(236, 26);
             studentiToolStripMenuItem.Text = "Studenti";
-            studentiToolStripMenuItem.Click += studentiToolStripMenuItem_Click;
+            studentiToolStripMenuItem.Click += StudentiToolStripMenuItem_Click;
             // 
             // grupeToolStripMenuItem
             // 
@@ -159,35 +159,35 @@
             asociereGrupaToolStripMenuItem.Name = "asociereGrupaToolStripMenuItem";
             asociereGrupaToolStripMenuItem.Size = new Size(212, 26);
             asociereGrupaToolStripMenuItem.Text = "Asociere Grupa";
-            asociereGrupaToolStripMenuItem.Click += asociereGrupaToolStripMenuItem_Click;
+            asociereGrupaToolStripMenuItem.Click += AsociereGrupaToolStripMenuItem_Click;
             // 
             // creareGrupaToolStripMenuItem
             // 
             creareGrupaToolStripMenuItem.Name = "creareGrupaToolStripMenuItem";
             creareGrupaToolStripMenuItem.Size = new Size(212, 26);
             creareGrupaToolStripMenuItem.Text = "Creare Grupa";
-            creareGrupaToolStripMenuItem.Click += creareGrupaToolStripMenuItem_Click;
+            creareGrupaToolStripMenuItem.Click += CreareGrupaToolStripMenuItem_Click;
             // 
             // vizualizareGrupaToolStripMenuItem
             // 
             vizualizareGrupaToolStripMenuItem.Name = "vizualizareGrupaToolStripMenuItem";
             vizualizareGrupaToolStripMenuItem.Size = new Size(212, 26);
             vizualizareGrupaToolStripMenuItem.Text = "Vizualizare Grupa";
-            vizualizareGrupaToolStripMenuItem.Click += vizualizareGrupaToolStripMenuItem_Click;
+            vizualizareGrupaToolStripMenuItem.Click += VizualizareGrupaToolStripMenuItem_Click;
             // 
             // divizareAutomataToolStripMenuItem
             // 
             divizareAutomataToolStripMenuItem.Name = "divizareAutomataToolStripMenuItem";
             divizareAutomataToolStripMenuItem.Size = new Size(212, 26);
             divizareAutomataToolStripMenuItem.Text = "DivizareAutomata";
-            divizareAutomataToolStripMenuItem.Click += divizareAutomataToolStripMenuItem_Click;
+            divizareAutomataToolStripMenuItem.Click += DivizareAutomataToolStripMenuItem_Click;
             // 
             // noteToolStripMenuItem
             // 
             noteToolStripMenuItem.Name = "noteToolStripMenuItem";
             noteToolStripMenuItem.Size = new Size(236, 26);
             noteToolStripMenuItem.Text = "Note";
-            noteToolStripMenuItem.Click += noteToolStripMenuItem_Click;
+            noteToolStripMenuItem.Click += NoteToolStripMenuItem_Click;
             // 
             // helpToolStripMenuItem
             // 
@@ -195,7 +195,7 @@
             helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             helpToolStripMenuItem.Size = new Size(55, 24);
             helpToolStripMenuItem.Text = "Help";
-            helpToolStripMenuItem.Click += helpToolStripMenuItem_Click;
+            helpToolStripMenuItem.Click += HelpToolStripMenuItem_Click;
             // 
             // dataGridView1
             // 
@@ -206,9 +206,9 @@
             dataGridView1.RowTemplate.Height = 29;
             dataGridView1.Size = new Size(601, 416);
             dataGridView1.TabIndex = 3;
-            dataGridView1.CellClick += dataGridView1_CellClick_1;
-            dataGridView1.CellEndEdit += dataGridView1_CellEndEdit;
-            dataGridView1.UserAddedRow += dataGridView1_UserAddedRow;
+            dataGridView1.CellClick += DataGridView1_CellClick_1;
+            dataGridView1.CellEndEdit += DataGridView1_CellEndEdit;
+            dataGridView1.UserAddedRow += DataGridView1_UserAddedRow;
             // 
             // button2
             // 
@@ -218,7 +218,7 @@
             button2.TabIndex = 5;
             button2.Text = "Remove";
             button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            button2.Click += Button2_Click;
             // 
             // comboBox1
             // 
@@ -228,7 +228,7 @@
             comboBox1.Name = "comboBox1";
             comboBox1.Size = new Size(151, 28);
             comboBox1.TabIndex = 6;
-            comboBox1.SelectedIndexChanged += comboBox1_SelectedIndexChanged;
+            comboBox1.SelectedIndexChanged += ComboBox1_SelectedIndexChanged;
             // 
             // textBox1
             // 
@@ -245,7 +245,7 @@
             button1.TabIndex = 8;
             button1.Text = "Insert";
             button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            button1.Click += Button1_Click;
             // 
             // comboBox2
             // 
@@ -264,7 +264,7 @@
             comboBox3.Name = "comboBox3";
             comboBox3.Size = new Size(151, 28);
             comboBox3.TabIndex = 10;
-            comboBox3.SelectedIndexChanged += comboBox3_SelectedIndexChanged;
+            comboBox3.SelectedIndexChanged += ComboBox3_SelectedIndexChanged;
             // 
             // comboBox4
             // 
@@ -275,7 +275,7 @@
             comboBox4.Name = "comboBox4";
             comboBox4.Size = new Size(151, 28);
             comboBox4.TabIndex = 11;
-            comboBox4.SelectedIndexChanged += comboBox4_SelectedIndexChanged;
+            comboBox4.SelectedIndexChanged += ComboBox4_SelectedIndexChanged;
             // 
             // textBox2
             // 
@@ -283,7 +283,7 @@
             textBox2.Name = "textBox2";
             textBox2.Size = new Size(125, 27);
             textBox2.TabIndex = 12;
-            textBox2.Click += textBox2_Click;
+            textBox2.Click += TextBox2_Click;
             // 
             // textBox3
             // 
@@ -291,7 +291,7 @@
             textBox3.Name = "textBox3";
             textBox3.Size = new Size(125, 27);
             textBox3.TabIndex = 13;
-            textBox3.Click += textBox2_Click;
+            textBox3.Click += TextBox2_Click;
             // 
             // textBox4
             // 
@@ -299,7 +299,7 @@
             textBox4.Name = "textBox4";
             textBox4.Size = new Size(125, 27);
             textBox4.TabIndex = 14;
-            textBox4.Click += textBox2_Click;
+            textBox4.Click += TextBox2_Click;
             // 
             // button3
             // 
@@ -309,7 +309,7 @@
             button3.TabIndex = 15;
             button3.Text = "Insert";
             button3.UseVisualStyleBackColor = true;
-            button3.Click += button3_Click;
+            button3.Click += Button3_Click;
             // 
             // button4
             // 
@@ -320,7 +320,7 @@
             button4.TabIndex = 16;
             button4.Text = "Adaugare";
             button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
+            button4.Click += Button4_Click;
             // 
             // button5
             // 
@@ -331,14 +331,14 @@
             button5.TabIndex = 17;
             button5.Text = "Stergere";
             button5.UseVisualStyleBackColor = true;
-            button5.Click += button5_Click;
+            button5.Click += Button5_Click;
             // 
             // catalogToolStripMenuItem
             // 
             catalogToolStripMenuItem.Name = "catalogToolStripMenuItem";
             catalogToolStripMenuItem.Size = new Size(236, 26);
             catalogToolStripMenuItem.Text = "Catalog";
-            catalogToolStripMenuItem.Click += catalogToolStripMenuItem_Click;
+            catalogToolStripMenuItem.Click += CatalogToolStripMenuItem_Click;
             // 
             // Form2
             // 
